@@ -123,7 +123,7 @@ module.exports = (sequelize, DataTypes) => {
     
     // Admin tracking
     created_by: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: true
     },
     
@@ -156,17 +156,17 @@ module.exports = (sequelize, DataTypes) => {
       as: 'creator'
     });
 
-    // User answers for this question
-    Question.hasMany(models.UserAnswer, {
-      foreignKey: 'question_id',
-      as: 'userAnswers'
-    });
+    // User answers for this question (commented out until UserAnswer model is created)
+    // Question.hasMany(models.UserAnswer, {
+    //   foreignKey: 'question_id',
+    //   as: 'userAnswers'
+    // });
 
-    // Analytics
-    Question.hasMany(models.TestAnalytics, {
-      foreignKey: 'question_id',
-      as: 'analytics'
-    });
+    // Analytics (commented out until TestAnalytics model is created)
+    // Question.hasMany(models.TestAnalytics, {
+    //   foreignKey: 'question_id',
+    //   as: 'analytics'
+    // });
   };
 
   return Question;
