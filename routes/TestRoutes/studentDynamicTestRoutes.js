@@ -177,10 +177,10 @@ const requireAuth = async (req, res, next) => {
 
 // Get test series with new hierarchy (replaces old test-series listing)
 router.get("/dynamic/test-series", optionalAuth, async (req, res) => {
-  console.log(
-    "🔍 /dynamic/test-series route hit with user:",
-    req.user ? req.user.uuid : "no user"
-  );
+  // console.log(
+//     "🔍 /dynamic/test-series route hit with user:",
+//     req.user ? req.user.uuid : "no user"
+//   );
   try {
     const {
       page = 1,
@@ -931,7 +931,7 @@ router.get(
         return formatted;
       });
 
-      console.log(solutions);
+      // console.log(solutions);
 
       res.json({
         success: true,

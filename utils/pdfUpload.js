@@ -37,8 +37,8 @@ const storage = multer.diskStorage({
 
 // File filter to only allow PDFs
 const fileFilter = (req, file, cb) => {
-  console.log('File filter - mimetype:', file.mimetype);
-  console.log('File filter - originalname:', file.originalname);
+  // console.log('File filter - mimetype:', file.mimetype);
+  // console.log('File filter - originalname:', file.originalname);
   
   // Check MIME type
   if (file.mimetype === 'application/pdf') {
@@ -69,16 +69,16 @@ const uploadSinglePDF = upload.any();
 
 // Middleware wrapper with error handling
 const handlePDFUpload = (req, res, next) => {
-  console.log('=== PDF UPLOAD MIDDLEWARE STARTED ===');
-  console.log('Request received at:', new Date().toISOString());
-  console.log('Original req.body:', req.body);
-  console.log('Original req.files:', req.files);
+  // console.log('=== PDF UPLOAD MIDDLEWARE STARTED ===');
+  // console.log('Request received at:', new Date().toISOString());
+  // console.log('Original req.body:', req.body);
+  // console.log('Original req.files:', req.files);
 
   uploadSinglePDF(req, res, (err) => {
-    console.log('🔄 MULTER: Upload processing complete');
-    console.log('📋 MULTER: Final req.body:', req.body);
-    console.log('📁 MULTER: Final req.files:', req.files);
-    console.log('📄 MULTER: Final req.file:', req.file);
+    // console.log('🔄 MULTER: Upload processing complete');
+    // console.log('📋 MULTER: Final req.body:', req.body);
+    // console.log('📁 MULTER: Final req.files:', req.files);
+    // console.log('📄 MULTER: Final req.file:', req.file);
 
     if (err) {
       console.error('PDF upload error:', err);
@@ -111,19 +111,19 @@ const handlePDFUpload = (req, res, next) => {
     }
     
     if (!req.files || req.files.length === 0) {
-      console.log('No files provided in request');
+      // console.log('No files provided in request');
       return res.status(400).json({
         success: false,
         message: 'No PDF file provided'
       });
     }
     
-    console.log('File successfully uploaded by multer:', {
-      originalname: req.files[0].originalname,
-      mimetype: req.files[0].mimetype,
-      size: req.files[0].size,
-      path: req.files[0].path
-    });
+    // console.log('File successfully uploaded by multer:', {
+//       originalname: req.files[0].originalname,
+//       mimetype: req.files[0].mimetype,
+//       size: req.files[0].size,
+//       path: req.files[0].path
+//     });
     
     next();
   });
@@ -174,7 +174,7 @@ const validatePDFFile = (filePath) => {
 
     // Get file stats
     const stats = fs.statSync(filePath);
-    console.log('PDF validation - file size:', stats.size, 'bytes');
+    // console.log('PDF validation - file size:', stats.size, 'bytes');
     
     if (stats.size === 0) {
       console.error('PDF validation - file is empty');
@@ -184,11 +184,11 @@ const validatePDFFile = (filePath) => {
     // Read first 5 bytes to check PDF signature '%PDF-'
     const buffer = fs.readFileSync(filePath, { start: 0, end: Math.min(5, stats.size) });
     const signature = buffer.toString('ascii', 0, Math.min(4, buffer.length));
-    console.log('PDF validation - signature:', JSON.stringify(signature), 'from file:', filePath);
+    // console.log('PDF validation - signature:', JSON.stringify(signature), 'from file:', filePath);
     
     // Check for PDF signature
     const isValid = signature === '%PDF';
-    console.log('PDF validation result:', isValid);
+    // console.log('PDF validation result:', isValid);
     return isValid;
   } catch (error) {
     console.error('PDF validation error:', error);

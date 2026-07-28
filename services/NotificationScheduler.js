@@ -16,7 +16,7 @@ class NotificationScheduler {
   initialize() {
     if (this.isInitialized) return;
 
-    console.log('🕒 Initializing Notification Scheduler...');
+    // console.log('🕒 Initializing Notification Scheduler...');
 
     // Schedule daily digest notifications (8 AM)
     cron.schedule('0 8 * * *', () => {
@@ -44,7 +44,7 @@ class NotificationScheduler {
     });
 
     this.isInitialized = true;
-    console.log('✅ Notification Scheduler initialized successfully');
+    // console.log('✅ Notification Scheduler initialized successfully');
   }
 
   /**
@@ -52,7 +52,7 @@ class NotificationScheduler {
    */
   async sendDailyDigest() {
     try {
-      console.log('📊 Sending daily digest notifications...');
+      // console.log('📊 Sending daily digest notifications...');
 
       // Get users who were active in the last 7 days
       const activeUsers = await User.findAll({
@@ -90,7 +90,7 @@ class NotificationScheduler {
       });
 
       if (recentPracticeTests === 0 && recentTestSeries === 0) {
-        console.log('No new content to notify about today');
+        // console.log('No new content to notify about today');
         return;
       }
 
@@ -112,7 +112,7 @@ class NotificationScheduler {
       };
 
       await NotificationService.sendNotificationToUsers(userIds, notificationData);
-      console.log(`✅ Daily digest sent to ${userIds.length} active users`);
+      // console.log(`✅ Daily digest sent to ${userIds.length} active users`);
 
     } catch (error) {
       console.error('❌ Error sending daily digest:', error);
@@ -124,7 +124,7 @@ class NotificationScheduler {
    */
   async sendWeeklyEngagementNotifications() {
     try {
-      console.log('📈 Sending weekly engagement notifications...');
+      // console.log('📈 Sending weekly engagement notifications...');
 
       // Get users who haven't taken a test in the last week
       const inactiveUsers = await User.findAll({
@@ -156,7 +156,7 @@ class NotificationScheduler {
       };
 
       await NotificationService.sendNotificationToUsers(userIds, notificationData);
-      console.log(`✅ Weekly engagement notifications sent to ${userIds.length} users`);
+      // console.log(`✅ Weekly engagement notifications sent to ${userIds.length} users`);
 
     } catch (error) {
       console.error('❌ Error sending weekly engagement notifications:', error);
@@ -168,7 +168,7 @@ class NotificationScheduler {
    */
   async sendInactiveUserReminders() {
     try {
-      console.log('💤 Sending inactive user reminders...');
+      // console.log('💤 Sending inactive user reminders...');
 
       // Get users inactive for 3+ days
       const inactiveUsers = await User.findAll({
@@ -200,7 +200,7 @@ class NotificationScheduler {
       };
 
       await NotificationService.sendNotificationToUsers(userIds, notificationData);
-      console.log(`✅ Inactive user reminders sent to ${userIds.length} users`);
+      // console.log(`✅ Inactive user reminders sent to ${userIds.length} users`);
 
     } catch (error) {
       console.error('❌ Error sending inactive user reminders:', error);
@@ -251,7 +251,7 @@ class NotificationScheduler {
           // Send to a subset to avoid overwhelming users
           const selectedUsers = userIds.slice(0, 10);
           await NotificationService.sendNotificationToUsers(selectedUsers, notificationData);
-          console.log(`✅ Practice reminders sent to ${selectedUsers.length} users at ${hour}:00`);
+          // console.log(`✅ Practice reminders sent to ${selectedUsers.length} users at ${hour}:00`);
         }
       }
 
@@ -265,7 +265,7 @@ class NotificationScheduler {
    */
   async sendWeeklyContentSummary() {
     try {
-      console.log('📋 Sending weekly content summary...');
+      // console.log('📋 Sending weekly content summary...');
 
       const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
@@ -287,7 +287,7 @@ class NotificationScheduler {
       ]);
 
       if (weeklyPracticeTests === 0 && weeklyTestSeries === 0) {
-        console.log('No new content this week to summarize');
+        // console.log('No new content this week to summarize');
         return;
       }
 
@@ -298,7 +298,7 @@ class NotificationScheduler {
       };
 
       await NotificationTriggers.onBulkContentAdded(contentSummary);
-      console.log(`✅ Weekly content summary sent: ${weeklyPracticeTests} practice tests, ${weeklyTestSeries} test series`);
+      // console.log(`✅ Weekly content summary sent: ${weeklyPracticeTests} practice tests, ${weeklyTestSeries} test series`);
 
     } catch (error) {
       console.error('❌ Error sending weekly content summary:', error);
@@ -314,7 +314,7 @@ class NotificationScheduler {
       
       const job = cron.schedule(cronExpression, async () => {
         try {
-          console.log(`📅 Executing scheduled notification: ${jobId}`);
+          // console.log(`📅 Executing scheduled notification: ${jobId}`);
           
           const users = await NotificationTriggers.getNotificationEligibleUsers();
           const userIds = users.map(user => user.uuid);
@@ -324,7 +324,7 @@ class NotificationScheduler {
           // Remove the job after execution
           this.cancelScheduledNotification(jobId);
           
-          console.log(`✅ Scheduled notification executed: ${jobId}`);
+          // console.log(`✅ Scheduled notification executed: ${jobId}`);
         } catch (error) {
           console.error(`❌ Error executing scheduled notification ${jobId}:`, error);
         }
@@ -335,7 +335,7 @@ class NotificationScheduler {
       this.scheduledJobs.set(jobId, job);
       job.start();
 
-      console.log(`✅ Notification scheduled for ${scheduleTime} with ID: ${jobId}`);
+      // console.log(`✅ Notification scheduled for ${scheduleTime} with ID: ${jobId}`);
       return { success: true, jobId };
 
     } catch (error) {
@@ -352,7 +352,7 @@ class NotificationScheduler {
     if (job) {
       job.destroy();
       this.scheduledJobs.delete(jobId);
-      console.log(`✅ Cancelled scheduled notification: ${jobId}`);
+      // console.log(`✅ Cancelled scheduled notification: ${jobId}`);
       return true;
     }
     return false;
@@ -379,10 +379,10 @@ class NotificationScheduler {
   stopAllJobs() {
     this.scheduledJobs.forEach((job, jobId) => {
       job.destroy();
-      console.log(`🛑 Stopped job: ${jobId}`);
+      // console.log(`🛑 Stopped job: ${jobId}`);
     });
     this.scheduledJobs.clear();
-    console.log('🛑 All scheduled notification jobs stopped');
+    // console.log('🛑 All scheduled notification jobs stopped');
   }
 }
 

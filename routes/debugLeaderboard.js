@@ -9,15 +9,15 @@ router.get('/test-series/:testSeriesId', async (req, res) => {
     try {
         const { testSeriesId } = req.params;
 
-        console.log('=== LEADERBOARD DEBUG ===');
-        console.log('Test Series UUID:', testSeriesId);
+        // console.log('=== LEADERBOARD DEBUG ===');
+        // console.log('Test Series UUID:', testSeriesId);
 
         // 1. Check if test series exists
         const testSeries = await TestSeries.findOne({
             where: { uuid: testSeriesId }
         });
 
-        console.log('1. Test Series found:', testSeries ? `ID: ${testSeries.id}, Name: ${testSeries.name}` : 'NOT FOUND');
+        // console.log('1. Test Series found:', testSeries ? `ID: ${testSeries.id}, Name: ${testSeries.name}` : 'NOT FOUND');
 
         if (!testSeries) {
             return res.json({ error: 'Test series not found', testSeriesId });
@@ -29,7 +29,7 @@ router.get('/test-series/:testSeriesId', async (req, res) => {
             attributes: ['id', 'title']
         });
 
-        console.log('2. NewTests found:', newTests.length, newTests.map(t => `ID: ${t.id}, Title: ${t.title}`));
+        // console.log('2. NewTests found:', newTests.length, newTests.map(t => `ID: ${t.id}, Title: ${t.title}`));
 
         // 3. Check for Categories linked to this test series
         const categories = await Category.findAll({
@@ -37,7 +37,7 @@ router.get('/test-series/:testSeriesId', async (req, res) => {
             attributes: ['id', 'name']
         });
 
-        console.log('3. Categories found:', categories.length, categories.map(c => `ID: ${c.id}, Name: ${c.name}`));
+        // console.log('3. Categories found:', categories.length, categories.map(c => `ID: ${c.id}, Name: ${c.name}`));
 
         // 4. Check for Tests linked through categories
         const oldTests = await Test.findAll({
@@ -53,14 +53,14 @@ router.get('/test-series/:testSeriesId', async (req, res) => {
             attributes: ['id', 'title', 'sub_category_id']
         });
 
-        console.log('4. Old Tests found:', oldTests.length, oldTests.map(t => `ID: ${t.id}, Title: ${t.title}, SubCat: ${t.sub_category_id}`));
+        // console.log('4. Old Tests found:', oldTests.length, oldTests.map(t => `ID: ${t.id}, Title: ${t.title}, SubCat: ${t.sub_category_id}`));
 
         // 5. Get all test IDs
         const newTestIds = newTests.map(t => t.id);
         const oldTestIds = oldTests.map(t => t.id);
         const allTestIds = [...newTestIds, ...oldTestIds];
 
-        console.log('5. All Test IDs:', allTestIds);
+        // console.log('5. All Test IDs:', allTestIds);
 
         // 6. Check for leaderboard entries with these test IDs
         const leaderboardEntries = await LeaderboardEntry.findAll({
@@ -78,9 +78,9 @@ router.get('/test-series/:testSeriesId', async (req, res) => {
             limit: 10
         });
 
-        console.log('6. Leaderboard Entries found:', leaderboardEntries.length);
+        // console.log('6. Leaderboard Entries found:', leaderboardEntries.length);
         leaderboardEntries.forEach(entry => {
-            console.log(`   Entry ID: ${entry.id}, User: ${entry.user_id} (${entry.user?.username}), Test: ${entry.test_id}, Score: ${entry.score}`);
+            // console.log(`   Entry ID: ${entry.id}, User: ${entry.user_id} (${entry.user?.username}), Test: ${entry.test_id}, Score: ${entry.score}`);
         });
 
         // 7. Also check ALL leaderboard entries (ignoring test_id filter)
@@ -96,12 +96,12 @@ router.get('/test-series/:testSeriesId', async (req, res) => {
             limit: 5
         });
 
-        console.log('7. ALL Recent Leaderboard Entries:', allLeaderboardEntries.length);
+        // console.log('7. ALL Recent Leaderboard Entries:', allLeaderboardEntries.length);
         allLeaderboardEntries.forEach(entry => {
-            console.log(`   Entry ID: ${entry.id}, User: ${entry.user_id} (${entry.user?.username}), Test: ${entry.test_id}, Score: ${entry.score}`);
+            // console.log(`   Entry ID: ${entry.id}, User: ${entry.user_id} (${entry.user?.username}), Test: ${entry.test_id}, Score: ${entry.score}`);
         });
 
-        console.log('=== END DEBUG ===');
+        // console.log('=== END DEBUG ===');
 
         res.json({
             testSeriesId,

@@ -273,9 +273,9 @@ class TestManagementController {
 
   // Get all test series with pagination, filtering, and statistics
   async getTestSeries(req, res) {
-    console.log('=================================');
-    console.log('🔥 CLAUDE DEBUG: getTestSeries called!');
-    console.log('=================================');
+    // console.log('=================================');
+    // console.log('🔥 CLAUDE DEBUG: getTestSeries called!');
+    // console.log('=================================');
     try {
       const {
         page = 1,
@@ -341,10 +341,10 @@ class TestManagementController {
       };
 
       // Transform data to match frontend expectations
-      console.log('DEBUG: Raw testSeries data from DB:', JSON.stringify(testSeries.slice(0, 1), null, 2));
+      // console.log('DEBUG: Raw testSeries data from DB:', JSON.stringify(testSeries.slice(0, 1), null, 2));
 
       const transformedSeries = testSeries.map(series => {
-        console.log('DEBUG: Processing series:', series.uuid, 'has_negative_marking:', series.has_negative_marking, 'negative_marks:', series.negative_marks, "is_course_closed", series.dataValues.is_course_closed);
+        // console.log('DEBUG: Processing series:', series.uuid, 'has_negative_marking:', series.has_negative_marking, 'negative_marks:', series.negative_marks, "is_course_closed", series.dataValues.is_course_closed);
         // console.log('DEBUG: Processing series:', series);
 
         return {
@@ -372,7 +372,7 @@ class TestManagementController {
         };
       });
 
-      console.log('DEBUG: Transformed response first item:', JSON.stringify(transformedSeries[0], null, 2));
+      // console.log('DEBUG: Transformed response first item:', JSON.stringify(transformedSeries[0], null, 2));
 
       res.json({
         success: true,

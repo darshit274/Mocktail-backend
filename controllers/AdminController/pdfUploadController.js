@@ -91,12 +91,12 @@ exports.createPdfCategory = async (req, res, next) => {
 // Upload PDF
 exports.uploadPdf = async (req, res, next) => {
   try {
-    console.log('🔍 DEBUG: PDF Upload Request Details:');
-    console.log('📋 req.body:', req.body);
-    console.log('📁 req.files:', req.files);
-    console.log('📄 req.file:', req.file);
-    console.log('🔑 req.admin:', req.admin?.id);
-    console.log('📝 Headers:', req.headers);
+    // console.log('🔍 DEBUG: PDF Upload Request Details:');
+    // console.log('📋 req.body:', req.body);
+    // console.log('📁 req.files:', req.files);
+    // console.log('📄 req.file:', req.file);
+    // console.log('🔑 req.admin:', req.admin?.id);
+    // console.log('📝 Headers:', req.headers);
 
     const {
       title,
@@ -117,9 +117,9 @@ exports.uploadPdf = async (req, res, next) => {
     } = req.body;
     const adminId = req.admin?.id;
 
-    console.log('📤 PDF Upload using multer');
-    console.log('📋 Request body:', req.body);
-    console.log('📁 Files:', req.files);
+    // console.log('📤 PDF Upload using multer');
+    // console.log('📋 Request body:', req.body);
+    // console.log('📁 Files:', req.files);
 
     // Check if file was uploaded using multer (any field name)
     if (!req.files || req.files.length === 0) {
@@ -187,8 +187,8 @@ exports.uploadPdf = async (req, res, next) => {
     const filePath = uploadedFile.path;
     const filename = uploadedFile.filename;
 
-    console.log('✅ File saved to:', filePath);
-    console.log('📄 File size:', uploadedFile.size, 'bytes');
+    // console.log('✅ File saved to:', filePath);
+    // console.log('📄 File size:', uploadedFile.size, 'bytes');
 
     try {
       // Create PDF record

@@ -16,7 +16,7 @@ module.exports = {
       COMMENT 'Type of test series: free, paid, or previous years question papers';
     `);
 
-    console.log('✅ Successfully added previous_years_question_papers to pricing_type ENUM');
+    // console.log('✅ Successfully added previous_years_question_papers to pricing_type ENUM');
   },
 
   async down (queryInterface, Sequelize) {
@@ -33,6 +33,6 @@ module.exports = {
       NOT NULL;
     `);
 
-    console.log('✅ Reverted pricing_type ENUM to original values');
+    // console.log('✅ Reverted pricing_type ENUM to original values');
   }
 };

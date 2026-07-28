@@ -8,7 +8,7 @@ const NotificationTriggers = require('../../services/NotificationTriggers');
 // Get all PDFs with pagination and filters
 exports.getPdfs = async (req, res, next) => {
     try {
-        console.log('📋 PDF list request received');
+        // console.log('📋 PDF list request received');
         
         // Check if table exists by doing a simple count query
         const testQuery = await Pdfs.count().catch(err => {
@@ -16,7 +16,7 @@ exports.getPdfs = async (req, res, next) => {
             throw new Error(`PDFs table issue: ${err.message}`);
         });
         
-        console.log('✅ PDFs table accessible, count:', testQuery);
+        // console.log('✅ PDFs table accessible, count:', testQuery);
 
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -54,7 +54,7 @@ exports.getPdfs = async (req, res, next) => {
             whereClause.is_featured = is_featured === 'true';
         }
 
-        console.log('🔍 Query filters:', whereClause);
+        // console.log('🔍 Query filters:', whereClause);
 
         const { count, rows } = await Pdfs.findAndCountAll({
             where: whereClause,
@@ -90,7 +90,7 @@ exports.getPdfs = async (req, res, next) => {
             ]
         });
 
-        console.log('📊 Query results:', { count, resultsLength: rows.length });
+        // console.log('📊 Query results:', { count, resultsLength: rows.length });
 
         res.status(200).json({
             success: true,
@@ -185,7 +185,7 @@ exports.createPdf = async (req, res, next) => {
                 subject: pdfWithAssociations.examType?.name || 'General',
                 is_free: access_level === 'free'
             });
-            console.log('✅ Notification sent for new PDF:', pdf.title);
+            // console.log('✅ Notification sent for new PDF:', pdf.title);
         } catch (notificationError) {
             console.error('⚠️  Failed to send notification for new PDF:', notificationError);
             // Don't fail the PDF creation if notification fails
@@ -273,25 +273,25 @@ exports.deletePdf = async (req, res, next) => {
 exports.getPdfDownloadUrl = async (req, res, next) => {
     try {
         const { id } = req.params;
-        console.log('📥 Download request for PDF ID:', id);
+        // console.log('📥 Download request for PDF ID:', id);
 
         const pdf = await Pdfs.findByPk(id);
         if (!pdf) {
-            console.log('❌ PDF not found with ID:', id);
+            // console.log('❌ PDF not found with ID:', id);
             return next(new ErrorHandler('PDF not found', 404));
         }
 
-        console.log('✅ PDF found:', { title: pdf.title, file_path: pdf.file_path });
+        // console.log('✅ PDF found:', { title: pdf.title, file_path: pdf.file_path });
 
         // Increment download count
         await pdf.increment('download_count');
 
         // Check if file exists on disk
         const filePath = path.resolve(pdf.file_path);
-        console.log('🔍 Checking file path:', filePath);
+        // console.log('🔍 Checking file path:', filePath);
         
         if (!fs.existsSync(filePath)) {
-            console.log('❌ File not found on disk:', filePath);
+            // console.log('❌ File not found on disk:', filePath);
             return next(new ErrorHandler('File not found on server', 404));
         }
 
@@ -305,7 +305,7 @@ exports.getPdfDownloadUrl = async (req, res, next) => {
         const fileStream = fs.createReadStream(filePath);
         fileStream.pipe(res);
 
-        console.log('✅ File streaming started for:', filename);
+        // console.log('✅ File streaming started for:', filename);
         
     } catch (err) {
         console.error('❌ Get PDF download error:', err);
@@ -353,7 +353,7 @@ exports.uploadPdf = async (req, res, next) => {
 exports.getPdfBase64 = async (req, res, next) => {
     try {
         const { id } = req.params;
-        console.log('🔒 Secure PDF request for ID:', id);
+        // console.log('🔒 Secure PDF request for ID:', id);
 
         const pdf = await Pdfs.findByPk(id);
         if (!pdf) {
@@ -394,33 +394,33 @@ exports.getPdfBase64 = async (req, res, next) => {
 exports.viewPdf = async (req, res, next) => {
     try {
         const { id } = req.params;
-        console.log('👁️ View request for PDF ID:', id);
+        // console.log('👁️ View request for PDF ID:', id);
 
         const pdf = await Pdfs.findByPk(id);
         if (!pdf) {
-            console.log('❌ PDF not found with ID:', id);
+            // console.log('❌ PDF not found with ID:', id);
             return next(new ErrorHandler('PDF not found', 404));
         }
 
-        console.log('✅ PDF found:', { title: pdf.title, file_path: pdf.file_path });
-        console.log('📄 Full PDF Details:', {
-            id: pdf.id,
-            title: pdf.title,
-            original_filename: pdf.original_filename,
-            file_size: pdf.file_size,
-            file_path: pdf.file_path,
-            access_level: pdf.access_level
-        });
+        // console.log('✅ PDF found:', { title: pdf.title, file_path: pdf.file_path });
+        // console.log('📄 Full PDF Details:', {
+//             id: pdf.id,
+//             title: pdf.title,
+//             original_filename: pdf.original_filename,
+//             file_size: pdf.file_size,
+//             file_path: pdf.file_path,
+//             access_level: pdf.access_level
+//         });
 
         // Increment view count
         await pdf.increment('view_count');
 
         // Check if file exists on disk
         const filePath = path.resolve(pdf.file_path);
-        console.log('🔍 Checking file path:', filePath);
+        // console.log('🔍 Checking file path:', filePath);
         
         if (!fs.existsSync(filePath)) {
-            console.log('❌ File not found on disk:', filePath);
+            // console.log('❌ File not found on disk:', filePath);
             return next(new ErrorHandler('File not found on server', 404));
         }
 
@@ -443,7 +443,7 @@ exports.viewPdf = async (req, res, next) => {
         
         // Check referrer to ensure request is from our app
         const referrer = req.get('Referer') || req.get('Origin') || '';
-        console.log('🔒 Request referrer:', referrer);
+        // console.log('🔒 Request referrer:', referrer);
         
         // You can add additional security checks here
         // For now, we'll allow all requests but log them

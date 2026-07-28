@@ -14,15 +14,15 @@ const TEST_USER = {
 };
 
 async function testPaymentFlow() {
-  console.log('🧪 Testing Complete Payment Flow\n');
+  // console.log('🧪 Testing Complete Payment Flow\n');
 
   try {
     // Step 1: Login to get authentication token
-    console.log('📝 Step 1: Authenticating user...');
+    // console.log('📝 Step 1: Authenticating user...');
     const loginResponse = await axios.post(`${BASE_URL}/users/login`, TEST_USER);
     
     if (!loginResponse.data.success) {
-      console.log('❌ Login failed. Creating test user...');
+      // console.log('❌ Login failed. Creating test user...');
       
       // Try to register the test user first
       const registerResponse = await axios.post(`${BASE_URL}/users/register`, {
@@ -32,8 +32,8 @@ async function testPaymentFlow() {
       });
       
       if (registerResponse.data.success) {
-        console.log('✅ Test user created successfully');
-        console.log('📝 Logging in with new user...');
+        // console.log('✅ Test user created successfully');
+        // console.log('📝 Logging in with new user...');
         
         const loginRetry = await axios.post(`${BASE_URL}/users/login`, TEST_USER);
         if (!loginRetry.data.success) {
@@ -47,11 +47,11 @@ async function testPaymentFlow() {
       token = loginResponse.data.token;
     }
     
-    console.log('✅ Authentication successful');
-    console.log(`🎫 Token: ${token.substring(0, 20)}...`);
+    // console.log('✅ Authentication successful');
+    // console.log(`🎫 Token: ${token.substring(0, 20)}...`);
 
     // Step 2: Create payment order
-    console.log('\n💰 Step 2: Creating payment order...');
+    // console.log('\n💰 Step 2: Creating payment order...');
     const orderResponse = await axios.post(
       `${BASE_URL}/payments/create-order`,
       {
@@ -71,37 +71,37 @@ async function testPaymentFlow() {
     }
 
     const orderData = orderResponse.data.data;
-    console.log('✅ Payment order created successfully');
-    console.log(`📄 Order ID: ${orderData.orderId}`);
-    console.log(`💵 Amount: ₹${orderData.amount / 100}`);
+    // console.log('✅ Payment order created successfully');
+    // console.log(`📄 Order ID: ${orderData.orderId}`);
+    // console.log(`💵 Amount: ₹${orderData.amount / 100}`);
 
     // Step 3: Test checkout page
-    console.log('\n🌐 Step 3: Testing checkout page...');
+    // console.log('\n🌐 Step 3: Testing checkout page...');
     const checkoutUrl = `${BASE_URL}/payments/checkout/${orderData.orderId}?keyId=${orderData.keyId}&amount=${orderData.amount}&currency=${orderData.currency}&subscriptionId=${orderData.subscriptionId}&itemName=${encodeURIComponent(orderData.itemDetails.name)}`;
     
     const checkoutResponse = await axios.get(checkoutUrl);
     
     if (checkoutResponse.status === 200 && checkoutResponse.data.includes('MockTale Payment')) {
-      console.log('✅ Checkout page loads successfully');
-      console.log(`🔗 Checkout URL: ${checkoutUrl}`);
+      // console.log('✅ Checkout page loads successfully');
+      // console.log(`🔗 Checkout URL: ${checkoutUrl}`);
     } else {
       throw new Error('Checkout page failed to load properly');
     }
 
     // Success summary
-    console.log('\n🎉 PAYMENT FLOW TEST COMPLETED SUCCESSFULLY!');
-    console.log('\n📋 Test Results:');
-    console.log('✅ User authentication: WORKING');
-    console.log('✅ Payment order creation: WORKING');
-    console.log('✅ Checkout page rendering: WORKING');
-    console.log('✅ Razorpay integration: CONFIGURED');
+    // console.log('\n🎉 PAYMENT FLOW TEST COMPLETED SUCCESSFULLY!');
+    // console.log('\n📋 Test Results:');
+    // console.log('✅ User authentication: WORKING');
+    // console.log('✅ Payment order creation: WORKING');
+    // console.log('✅ Checkout page rendering: WORKING');
+    // console.log('✅ Razorpay integration: CONFIGURED');
     
-    console.log('\n🚀 Next Steps:');
-    console.log('1. Open the checkout URL in a browser to test payment UI');
-    console.log('2. Test payment completion flow in React Native app');
-    console.log('3. Verify payment verification webhook handling');
+    // console.log('\n🚀 Next Steps:');
+    // console.log('1. Open the checkout URL in a browser to test payment UI');
+    // console.log('2. Test payment completion flow in React Native app');
+    // console.log('3. Verify payment verification webhook handling');
     
-    console.log(`\n🌐 Manual Test URL:\n${checkoutUrl}`);
+    // console.log(`\n🌐 Manual Test URL:\n${checkoutUrl}`);
 
   } catch (error) {
     console.error('❌ Payment Flow Test Failed:');

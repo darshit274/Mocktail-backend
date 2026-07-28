@@ -282,7 +282,7 @@ exports.getDashboardStats = async (req, res, next) => {
             // PDF count
             if (Pdfs) totalPDFs = await Pdfs.count();
         } catch (modelError) {
-            console.log('Some models not available:', modelError.message);
+            // console.log('Some models not available:', modelError.message);
         }
 
         // Get today's data
@@ -327,7 +327,7 @@ exports.getDashboardStats = async (req, res, next) => {
             });
             totalRevenue = await Subscription.sum('amount_paid', { where: { status: 'completed' } }) || 0;
         } catch (subError) {
-            console.log('Subscription stats error:', subError.message);
+            // console.log('Subscription stats error:', subError.message);
         }
 
         // Get today's test activity
@@ -344,7 +344,7 @@ exports.getDashboardStats = async (req, res, next) => {
                 });
             }
         } catch (sessionError) {
-            console.log('Test session stats error:', sessionError.message);
+            // console.log('Test session stats error:', sessionError.message);
         }
 
         const stats = {
@@ -797,7 +797,7 @@ exports.getTestAttemptAnalytics = async (req, res, next) => {
                 }));
             }
         } catch (modelError) {
-            console.log('Test attempt analytics model error:', modelError.message);
+            // console.log('Test attempt analytics model error:', modelError.message);
         }
 
         // Fallback to mock data if no real data available
@@ -866,7 +866,7 @@ exports.getCategoryAnalytics = async (req, res, next) => {
                 }));
             }
         } catch (modelError) {
-            console.log('Category analytics model error:', modelError.message);
+            // console.log('Category analytics model error:', modelError.message);
         }
 
         // Fallback to mock data if no real data available

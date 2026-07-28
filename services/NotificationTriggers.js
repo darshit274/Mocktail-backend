@@ -9,13 +9,13 @@ class NotificationTriggers {
    */
   async onNewPracticeTestCreated(practiceTest) {
     try {
-      console.log('🔔 Triggering notification for new practice test:', practiceTest.title);
+      // console.log('🔔 Triggering notification for new practice test:', practiceTest.title);
 
       // Get all active users who should receive notifications
       const users = await this.getNotificationEligibleUsers();
       
       if (users.length === 0) {
-        console.log('No eligible users for notification');
+        // console.log('No eligible users for notification');
         return;
       }
 
@@ -42,7 +42,7 @@ class NotificationTriggers {
       // Send to all eligible users
       const result = await NotificationService.sendNotificationToUsers(userIds, notificationData);
       
-      console.log(`✅ Free test notification sent to ${result.successful_sends} users`);
+      // console.log(`✅ Free test notification sent to ${result.successful_sends} users`);
       return result;
 
     } catch (error) {
@@ -56,13 +56,13 @@ class NotificationTriggers {
    */
   async onNewTestSeriesCreated(testSeries) {
     try {
-      console.log('🔔 Triggering notification for new test series:', testSeries.title);
+      // console.log('🔔 Triggering notification for new test series:', testSeries.title);
 
       // Get all active users
       const users = await this.getNotificationEligibleUsers();
       
       if (users.length === 0) {
-        console.log('No eligible users for notification');
+        // console.log('No eligible users for notification');
         return;
       }
 
@@ -96,7 +96,7 @@ class NotificationTriggers {
       // Send to all eligible users
       const result = await NotificationService.sendNotificationToUsers(userIds, notificationData);
       
-      console.log(`✅ Test series notification sent to ${result.successful_sends} users`);
+      // console.log(`✅ Test series notification sent to ${result.successful_sends} users`);
       return result;
 
     } catch (error) {
@@ -110,13 +110,13 @@ class NotificationTriggers {
    */
   async onNewPdfCreated(pdf) {
     try {
-      console.log('🔔 Triggering notification for new PDF:', pdf.title);
+      // console.log('🔔 Triggering notification for new PDF:', pdf.title);
 
       // Get all active users
       const users = await this.getNotificationEligibleUsers();
       
       if (users.length === 0) {
-        console.log('No eligible users for notification');
+        // console.log('No eligible users for notification');
         return;
       }
 
@@ -143,7 +143,7 @@ class NotificationTriggers {
       // Send to all eligible users
       const result = await NotificationService.sendNotificationToUsers(userIds, notificationData);
       
-      console.log(`✅ PDF notification sent to ${result.successful_sends} users`);
+      // console.log(`✅ PDF notification sent to ${result.successful_sends} users`);
       return result;
 
     } catch (error) {
@@ -157,12 +157,12 @@ class NotificationTriggers {
    */
   async onTestSeriesSpecialOffer(testSeries, offerDetails) {
     try {
-      console.log('🔔 Triggering special offer notification:', testSeries.title);
+      // console.log('🔔 Triggering special offer notification:', testSeries.title);
 
       const users = await this.getNotificationEligibleUsers();
       
       if (users.length === 0) {
-        console.log('No eligible users for notification');
+        // console.log('No eligible users for notification');
         return;
       }
 
@@ -193,7 +193,7 @@ class NotificationTriggers {
 
       const result = await NotificationService.sendNotificationToUsers(userIds, notificationData);
       
-      console.log(`✅ Special offer notification sent to ${result.successful_sends} users`);
+      // console.log(`✅ Special offer notification sent to ${result.successful_sends} users`);
       return result;
 
     } catch (error) {
@@ -207,12 +207,12 @@ class NotificationTriggers {
    */
   async onBulkContentAdded(contentSummary) {
     try {
-      console.log('🔔 Triggering bulk content notification');
+      // console.log('🔔 Triggering bulk content notification');
 
       const users = await this.getNotificationEligibleUsers();
       
       if (users.length === 0) {
-        console.log('No eligible users for notification');
+        // console.log('No eligible users for notification');
         return;
       }
 
@@ -244,7 +244,7 @@ class NotificationTriggers {
 
       const result = await NotificationService.sendNotificationToUsers(userIds, notificationData);
       
-      console.log(`✅ Bulk content notification sent to ${result.successful_sends} users`);
+      // console.log(`✅ Bulk content notification sent to ${result.successful_sends} users`);
       return result;
 
     } catch (error) {
@@ -293,7 +293,7 @@ class NotificationTriggers {
   async scheduleNotification(notificationData, scheduledTime) {
     try {
       // This could be implemented with a job queue like Bull or node-cron
-      console.log(`📅 Notification scheduled for ${scheduledTime}`);
+      // console.log(`📅 Notification scheduled for ${scheduledTime}`);
       
       // For now, we'll just log it
       // In production, you'd want to use a proper job queue

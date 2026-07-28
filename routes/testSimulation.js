@@ -15,7 +15,7 @@ router.post('/complete-quiz', async (req, res) => {
             testSeriesId = null
         } = req.body;
 
-        console.log(`Creating simulation for userId: ${userId}, testId: ${testId}, testSeriesId: ${testSeriesId}`);
+        // console.log(`Creating simulation for userId: ${userId}, testId: ${testId}, testSeriesId: ${testSeriesId}`);
         const totalQuestions = 2;
         const correctAnswers = 2;
         const percentage = 100;
@@ -24,7 +24,7 @@ router.post('/complete-quiz', async (req, res) => {
         // Find the user, or create a temporary one for testing
         let user = await User.findOne({ where: { uuid: userId } });
         if (!user) {
-            console.log(`User ${userId} not found, creating temporary user for testing`);
+            // console.log(`User ${userId} not found, creating temporary user for testing`);
             // Create a temporary user for this submission
             const { v4: uuidv4 } = require('uuid');
             user = await User.create({
@@ -35,7 +35,7 @@ router.post('/complete-quiz', async (req, res) => {
                 isEmailVerified: true,
                 role: 'student'
             });
-            console.log(`Created temporary user: ${user.uuid}`);
+            // console.log(`Created temporary user: ${user.uuid}`);
         }
 
         // If testSeriesId is provided, create missing test series and test
@@ -60,7 +60,7 @@ router.post('/complete-quiz', async (req, res) => {
                     is_published: 1,
                     published_at: new Date()
                 });
-                console.log(`Created test series: ${testSeries.name} (${testSeries.uuid})`);
+                // console.log(`Created test series: ${testSeries.name} (${testSeries.uuid})`);
             }
 
             // Check if test exists for this series
@@ -89,7 +89,7 @@ router.post('/complete-quiz', async (req, res) => {
                     is_published: 1,
                     published_at: new Date()
                 });
-                console.log(`Created test: ${newTest.title} (ID: ${newTest.id})`);
+                // console.log(`Created test: ${newTest.title} (ID: ${newTest.id})`);
             }
         } else {
             // Verify the test exists in new_tests (for validation)

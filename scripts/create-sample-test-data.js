@@ -2,7 +2,7 @@ const { TestSeries, Category, SubCategory, Test, Question } = require('../models
 
 async function createSampleData() {
   try {
-    console.log('Creating sample test data...');
+    // console.log('Creating sample test data...');
 
     // Create Test Series
     const testSeries = await TestSeries.create({
@@ -10,7 +10,7 @@ async function createSampleData() {
       description: 'Comprehensive mock test series for GPSC examination preparation'
     });
 
-    console.log('✅ Created test series:', testSeries.name);
+    // console.log('✅ Created test series:', testSeries.name);
 
     // Create Categories
     const mathCategory = await Category.create({
@@ -25,7 +25,7 @@ async function createSampleData() {
       description: 'Physics, Chemistry, and Biology topics'
     });
 
-    console.log('✅ Created categories:', mathCategory.name, 'and', scienceCategory.name);
+    // console.log('✅ Created categories:', mathCategory.name, 'and', scienceCategory.name);
 
     // Create Sub-categories for Mathematics
     const algebraSubCategory = await SubCategory.create({
@@ -47,7 +47,7 @@ async function createSampleData() {
       description: 'Mechanics, thermodynamics, and optics'
     });
 
-    console.log('✅ Created sub-categories:', algebraSubCategory.name, geometrySubCategory.name, 'and', physicsSubCategory.name);
+    // console.log('✅ Created sub-categories:', algebraSubCategory.name, geometrySubCategory.name, 'and', physicsSubCategory.name);
 
     // Create Tests
     const algebraTest = await Test.create({
@@ -66,7 +66,7 @@ async function createSampleData() {
       total_marks: 30
     });
 
-    console.log('✅ Created tests:', algebraTest.title, 'and', geometryTest.title);
+    // console.log('✅ Created tests:', algebraTest.title, 'and', geometryTest.title);
 
     // Create Questions for Algebra Test
     const question1 = await Question.create({
@@ -106,24 +106,24 @@ async function createSampleData() {
       marks: 3
     });
 
-    console.log('✅ Created sample questions');
+    // console.log('✅ Created sample questions');
 
     // Update test total marks
     await algebraTest.update({ total_marks: 4 });
     await geometryTest.update({ total_marks: 3 });
 
-    console.log('🎉 Sample data created successfully!');
-    console.log(`
-    Created structure:
-    📚 Test Series: "${testSeries.name}"
-    ├── 📂 Category: "${mathCategory.name}"
-    │   ├── 📁 Sub-category: "${algebraSubCategory.name}"
-    │   │   └── 📝 Test: "${algebraTest.title}" (2 questions)
-    │   └── 📁 Sub-category: "${geometrySubCategory.name}"
-    │       └── 📝 Test: "${geometryTest.title}" (1 question)
-    └── 📂 Category: "${scienceCategory.name}"
-        └── 📁 Sub-category: "${physicsSubCategory.name}"
-    `);
+    // console.log('🎉 Sample data created successfully!');
+    // console.log(`
+    // Created structure:
+    // 📚 Test Series: "${testSeries.name}"
+    // ├── 📂 Category: "${mathCategory.name}"
+    // │   ├── 📁 Sub-category: "${algebraSubCategory.name}"
+    // │   │   └── 📝 Test: "${algebraTest.title}" (2 questions)
+    // │   └── 📁 Sub-category: "${geometrySubCategory.name}"
+    // │       └── 📝 Test: "${geometryTest.title}" (1 question)
+    // └── 📂 Category: "${scienceCategory.name}"
+    //     └── 📁 Sub-category: "${physicsSubCategory.name}"
+    // `);
 
   } catch (error) {
     console.error('Error creating sample data:', error);

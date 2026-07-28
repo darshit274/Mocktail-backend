@@ -28,7 +28,7 @@ const validateConfig = () => {
   if (!process.env.RAZORPAY_KEY_SECRET) {
     throw new Error('RAZORPAY_KEY_SECRET is required in environment variables');
   }
-  console.log('✅ Razorpay configuration validated successfully');
+  // console.log('✅ Razorpay configuration validated successfully');
 };
 
 // Generate unique receipt ID (Razorpay limit: 40 chars)
@@ -39,7 +39,7 @@ const generateReceiptId = (type = 'SUB', userId = '') => {
   const receiptId = `MT_${type}_${userSuffix}_${timestamp}_${randomStr}`;
   
   // Ensure it's within Razorpay's 40 character limit
-  console.log('🧾 Generated receipt ID:', receiptId, 'Length:', receiptId.length);
+  // console.log('🧾 Generated receipt ID:', receiptId, 'Length:', receiptId.length);
   return receiptId.substring(0, 40);
 };
 

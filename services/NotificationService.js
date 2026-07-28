@@ -25,7 +25,7 @@ class NotificationService {
       });
 
       if (pushTokens.length === 0) {
-        console.log(`No active push tokens found for user ${userId}`);
+        // console.log(`No active push tokens found for user ${userId}`);
         return { success: false, reason: 'No active push tokens' };
       }
 
@@ -232,7 +232,7 @@ class NotificationService {
           expires_at: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
         });
 
-        console.log(`✅ Updated existing push token for user ${userId}`);
+        // console.log(`✅ Updated existing push token for user ${userId}`);
       } else {
         // Create new token
         await PushToken.create({
@@ -244,7 +244,7 @@ class NotificationService {
           expires_at: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
         });
 
-        console.log(`✅ Registered new push token for user ${userId}`);
+        // console.log(`✅ Registered new push token for user ${userId}`);
       }
 
       // Subscribe to relevant topics
@@ -286,7 +286,7 @@ class NotificationService {
         await subscribeToTopic([pushToken], topic);
       }
 
-      console.log(`✅ Subscribed user ${userId} to topics:`, topics);
+      // console.log(`✅ Subscribed user ${userId} to topics:`, topics);
 
     } catch (error) {
       console.error('Error subscribing user to topics:', error);
@@ -468,7 +468,7 @@ class NotificationService {
         }
       });
 
-      console.log(`🧹 Cleaned up ${deletedCount} expired push tokens`);
+      // console.log(`🧹 Cleaned up ${deletedCount} expired push tokens`);
       return { success: true, deleted: deletedCount };
 
     } catch (error) {

@@ -4,7 +4,7 @@ const { TestSession, Test, Category, SubCategory, TestSeries, Question, User, Us
 const { Op } = require('sequelize');
 const AuthToken = require('../utils/AuthToken');
 
-console.log('🚀 Test History Routes loaded successfully!');
+// console.log('🚀 Test History Routes loaded successfully!');
 
 // Middleware for required authentication
 const requireAuth = async (req, res, next) => {
@@ -53,7 +53,7 @@ router.get('/', requireAuth, async (req, res) => {
         const userId = req.user.uuid;
         const { page = 1, limit = 10, sort = 'date_desc' } = req.query;
 
-        console.log(`📚 Fetching GROUPED test history for user: ${userId}`);
+        // console.log(`📚 Fetching GROUPED test history for user: ${userId}`);
 
         // First, get all sessions to check which system they belong to
         const allSessions = await TestSession.findAll({
@@ -337,7 +337,7 @@ router.get('/test/:testId/attempts', requireAuth, async (req, res) => {
         const userId = req.user.uuid;
         const { testId } = req.params;
 
-        console.log(`📊 Fetching all attempts for test ${testId} by user: ${userId}`);
+        // console.log(`📊 Fetching all attempts for test ${testId} by user: ${userId}`);
 
         // Check if testId is a UUID (category UUID) or numeric (old test_id)
         const isUuid = testId.includes('-') && testId.length > 10;
@@ -348,7 +348,7 @@ router.get('/test/:testId/attempts', requireAuth, async (req, res) => {
 
         if (isUuid) {
             // NEW SYSTEM: testId is a category UUID
-            console.log(`🆕 Searching by category UUID: ${testId}`);
+            // console.log(`🆕 Searching by category UUID: ${testId}`);
 
             // Get all sessions where session_data.category_uuid matches
             const allUserSessions = await TestSession.findAll({
@@ -414,7 +414,7 @@ router.get('/test/:testId/attempts', requireAuth, async (req, res) => {
 
         } else {
             // OLD SYSTEM: testId is a numeric test_id
-            console.log(`🔙 Searching by numeric test_id: ${testId}`);
+            // console.log(`🔙 Searching by numeric test_id: ${testId}`);
 
             sessions = await TestSession.findAll({
                 where: {
@@ -517,7 +517,7 @@ router.get('/:sessionId', requireAuth, async (req, res) => {
         const userId = req.user.uuid;
         const { sessionId } = req.params;
 
-        console.log(`📊 Fetching detailed result for session: ${sessionId}`);
+        // console.log(`📊 Fetching detailed result for session: ${sessionId}`);
 
         // Fetch session with all details - must belong to authenticated user
         const session = await TestSession.findOne({
@@ -602,7 +602,7 @@ router.get('/:sessionId/solutions', requireAuth, async (req, res) => {
         const userId = req.user.uuid;
         const { sessionId } = req.params;
 
-        console.log(`🔍 Fetching solutions for session: ${sessionId}`);
+        // console.log(`🔍 Fetching solutions for session: ${sessionId}`);
 
         // Fetch session - must belong to authenticated user
         const session = await TestSession.findOne({

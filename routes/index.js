@@ -49,7 +49,7 @@ router.use("/test-simulation", TestSimulationRoutes); // Temporary test simulati
 router.use("/quiz", QuizSubmissionRoutes); // Simple quiz submission APIs for frontend
 try {
   router.use("/test-history", TestHistoryRoutes); // Test history APIs for viewing past test results
-  console.log('✅ Test History Routes registered successfully');
+  // console.log('✅ Test History Routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering Test History Routes:', error);
 }

@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 
 (async () => {
   try {
-    console.log('🚀 Testing payment creation directly...');
+    // console.log('🚀 Testing payment creation directly...');
 
     // Get PDF data
     const pdf = await Pdfs.findOne({
@@ -11,7 +11,7 @@ const { v4: uuidv4 } = require('uuid');
       attributes: ['id', 'title', 'access_level', 'price', 'currency', 'is_free', 'discount_percentage']
     });
 
-    console.log('📄 PDF Data:', JSON.stringify(pdf ? pdf.toJSON() : null, null, 2));
+    // console.log('📄 PDF Data:', JSON.stringify(pdf ? pdf.toJSON() : null, null, 2));
 
     if (!pdf) {
       console.error('❌ PDF not found');
@@ -24,7 +24,7 @@ const { v4: uuidv4 } = require('uuid');
       attributes: ['uuid', 'email']
     });
 
-    console.log('👤 User:', user ? user.uuid : 'Not found');
+    // console.log('👤 User:', user ? user.uuid : 'Not found');
 
     if (!user) {
       console.error('❌ User not found');
@@ -39,16 +39,16 @@ const { v4: uuidv4 } = require('uuid');
       : basePrice;
     const amount = Math.round(discountedPrice * 100); // Convert to paise
 
-    console.log('💰 Payment calculation:', {
-      basePrice,
-      discountPercentage,
-      discountedPrice,
-      amountInPaise: amount,
-      amountInRupees: amount / 100
-    });
+    // console.log('💰 Payment calculation:', {
+//       basePrice,
+//       discountPercentage,
+//       discountedPrice,
+//       amountInPaise: amount,
+//       amountInRupees: amount / 100
+//     });
 
     // Test subscription creation
-    console.log('🔄 Creating test subscription record...');
+    // console.log('🔄 Creating test subscription record...');
 
     const subscriptionData = {
       id: uuidv4(),
@@ -69,13 +69,13 @@ const { v4: uuidv4 } = require('uuid');
     };
 
     const subscription = await Subscription.create(subscriptionData);
-    console.log('✅ Subscription created successfully:', subscription.id);
+    // console.log('✅ Subscription created successfully:', subscription.id);
 
     // Cleanup - delete test subscription
     await subscription.destroy();
-    console.log('🧹 Test subscription cleaned up');
+    // console.log('🧹 Test subscription cleaned up');
 
-    console.log('🎉 Payment flow test PASSED! All database operations work correctly.');
+    // console.log('🎉 Payment flow test PASSED! All database operations work correctly.');
 
     process.exit(0);
   } catch (error) {

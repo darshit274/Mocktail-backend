@@ -57,11 +57,11 @@ exports.uploadEditorImage = async (req, res, next) => {
       const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
       const imageUrl = `${serverUrl}/uploads/editor_images/${req.file.filename}`;
 
-      console.log('✅ Image uploaded successfully:', {
-        filename: req.file.filename,
-        size: req.file.size,
-        url: imageUrl
-      });
+      // console.log('✅ Image uploaded successfully:', {
+//         filename: req.file.filename,
+//         size: req.file.size,
+//         url: imageUrl
+//       });
 
       res.status(200).json({
         success: true,
@@ -100,7 +100,7 @@ exports.deleteEditorImage = async (req, res, next) => {
     // Delete the file
     fs.unlinkSync(filePath);
 
-    console.log('✅ Image deleted successfully:', filename);
+    // console.log('✅ Image deleted successfully:', filename);
 
     res.status(200).json({
       success: true,

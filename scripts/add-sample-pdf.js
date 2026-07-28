@@ -13,7 +13,7 @@ async function addSamplePDF() {
         description: 'General study materials for various exams',
         is_active: true
       });
-      console.log('✅ Created PDF category:', category.name);
+      // console.log('✅ Created PDF category:', category.name);
     }
 
     // Check if sample PDF already exists
@@ -22,7 +22,7 @@ async function addSamplePDF() {
     });
 
     if (existingPdf) {
-      console.log('Sample PDF already exists with ID:', existingPdf.id);
+      // console.log('Sample PDF already exists with ID:', existingPdf.id);
       return;
     }
 
@@ -45,13 +45,13 @@ async function addSamplePDF() {
       uploaded_by: 1
     });
 
-    console.log('✅ Sample PDF created successfully with ID:', samplePdf.id);
-    console.log('📄 PDF Details:', {
-      id: samplePdf.id,
-      title: samplePdf.title,
-      access_level: samplePdf.access_level,
-      file_path: samplePdf.file_path
-    });
+    // console.log('✅ Sample PDF created successfully with ID:', samplePdf.id);
+    // console.log('📄 PDF Details:', {
+//       id: samplePdf.id,
+//       title: samplePdf.title,
+//       access_level: samplePdf.access_level,
+//       file_path: samplePdf.file_path
+//     });
 
   } catch (error) {
     console.error('❌ Error creating sample PDF:', error);

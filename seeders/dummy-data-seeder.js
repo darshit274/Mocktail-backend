@@ -16,7 +16,7 @@ require('dotenv').config();
 const db = require('../models');
 const { TestSeries, Category, SubCategory, Test, Question, PdfCategory, sequelize } = db;
 
-const log  = (msg) => console.log(`  ✅  ${msg}`);
+const log  = (msg) => {}; // console.log(`  ✅  ${msg}`);
 const fail = (msg, err) => { console.error(`  ❌  ${msg}:`, err.message || err); };
 
 const ANSWER_MAP = ['A', 'B', 'C', 'D'];
@@ -24,7 +24,7 @@ const ANSWER_MAP = ['A', 'B', 'C', 'D'];
 // ─── CLEANUP ──────────────────────────────────────────────────────────────────
 
 async function cleanup() {
-  console.log('\n🧹  Cleaning up previously seeded data...\n');
+  // console.log('\n🧹  Cleaning up previously seeded data...\n');
   // Disable FK checks so we can delete in any order
   await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
   const tables = ['user_answers', 'test_sessions', 'leaderboard_entries', 'question_reports', 'questions', 'sub_categories', 'tests', 'new_tests', 'categories', 'new_test_series', 'pdf_categories'];
@@ -325,7 +325,7 @@ async function seedPdfCategories(def) {
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 (async () => {
-  console.log('\n🌱  Starting dummy data seeder (direct DB mode)...\n');
+  // console.log('\n🌱  Starting dummy data seeder (direct DB mode)...\n');
 
   try {
     await sequelize.authenticate();
@@ -337,7 +337,7 @@ async function seedPdfCategories(def) {
 
   await cleanup();
 
-  console.log('\n📚  Seeding Test Series (Courses) with simple hierarchy...\n');
+  // console.log('\n📚  Seeding Test Series (Courses) with simple hierarchy...\n');
   for (const def of SERIES_DEFS) {
     try {
       await seedTestSeries(def);
@@ -346,7 +346,7 @@ async function seedPdfCategories(def) {
     }
   }
 
-  console.log('\n📄  Seeding PDF Categories...\n');
+  // console.log('\n📄  Seeding PDF Categories...\n');
   for (const def of PDF_CATEGORY_DEFS) {
     try {
       await seedPdfCategories(def);
@@ -356,5 +356,5 @@ async function seedPdfCategories(def) {
   }
 
   await sequelize.close();
-  console.log('\n✨  Done! All dummy data seeded successfully.\n');
+  // console.log('\n✨  Done! All dummy data seeded successfully.\n');
 })();

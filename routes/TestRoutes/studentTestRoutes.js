@@ -39,28 +39,28 @@ const optionalAuth = async (req, res, next) => {
 
 const requireAuth = async (req, res, next) => {
   try {
-    console.log('🔍 Auth Debug - Headers:', req.headers.authorization ? 'Present' : 'Missing');
+    // console.log('🔍 Auth Debug - Headers:', req.headers.authorization ? 'Present' : 'Missing');
     const token = req.headers.authorization?.replace('Bearer ', '');
     if (!token) {
-      console.log('❌ Auth Debug - No token found');
+      // console.log('❌ Auth Debug - No token found');
       return res.status(401).json({ success: false, message: 'Authentication required' });
     }
 
-    console.log('🔍 Auth Debug - Token length:', token.length);
-    console.log('🔍 Auth Debug - Token preview:', token.substring(0, 20) + '...');
+    // console.log('🔍 Auth Debug - Token length:', token.length);
+    // console.log('🔍 Auth Debug - Token preview:', token.substring(0, 20) + '...');
     
     let decoded;
     try {
       decoded = AuthToken.verifyToken(token);
-      console.log('🔍 Auth Debug - Decoded payload:', JSON.stringify(decoded));
+      // console.log('🔍 Auth Debug - Decoded payload:', JSON.stringify(decoded));
     } catch (tokenError) {
-      console.log('❌ Auth Debug - Token verification failed:', tokenError.message);
+      // console.log('❌ Auth Debug - Token verification failed:', tokenError.message);
       return res.status(401).json({ success: false, message: 'Invalid token', error: tokenError.message });
     }
     
     const user = await User.findOne({ where: { uuid: decoded.uuid || decoded.id } });
-    console.log('🔍 Auth Debug - User lookup with UUID:', decoded.id);
-    console.log('🔍 Auth Debug - User found:', user ? `Yes (ID: ${user.id}, UUID: ${user.uuid})` : 'No');
+    // console.log('🔍 Auth Debug - User lookup with UUID:', decoded.id);
+    // console.log('🔍 Auth Debug - User found:', user ? `Yes (ID: ${user.id}, UUID: ${user.uuid})` : 'No');
     
     if (!user) {
       return res.status(401).json({ success: false, message: 'User not found' });
@@ -72,10 +72,10 @@ const requireAuth = async (req, res, next) => {
       id: user.id,       // Database primary key
       uuid: user.uuid    // User UUID for foreign key relations
     };
-    console.log('✅ Auth Debug - User authenticated:', { id: req.user.id, uuid: req.user.uuid });
+    // console.log('✅ Auth Debug - User authenticated:', { id: req.user.id, uuid: req.user.uuid });
     next();
   } catch (error) {
-    console.log('❌ Auth Debug - Error:', error.message);
+    // console.log('❌ Auth Debug - Error:', error.message);
     return res.status(401).json({ success: false, message: 'Invalid token' });
   }
 };
@@ -85,7 +85,7 @@ const requireAuth = async (req, res, next) => {
 
 // Debug endpoint to test authentication
 router.get('/auth-test', requireAuth, async (req, res) => {
-  console.log('🔍 Auth test - User:', req.user);
+  // console.log('🔍 Auth test - User:', req.user);
   res.json({
     success: true,
     message: 'Authentication successful',
@@ -412,7 +412,7 @@ router.get('/test-series/by-id/:id', optionalAuth, async (req, res) => {
 // Get all tests for a test series by ID (for mobile app compatibility)
 router.get('/test-series/by-id/:id/tests', optionalAuth, async (req, res) => {
   try {
-    console.log('📊 Getting tests for test series ID:', req.params.id);
+    // console.log('📊 Getting tests for test series ID:', req.params.id);
     
     const testSeries = await TestSeries.findOne({
       where: { id: req.params.id, is_active: true }
@@ -425,13 +425,13 @@ router.get('/test-series/by-id/:id/tests', optionalAuth, async (req, res) => {
       });
     }
 
-    console.log('✅ Found test series:', testSeries.name);
+    // console.log('✅ Found test series:', testSeries.name);
 
     // Get all tests in this test series through the hierarchy
     let tests = [];
     try {
       // Alternative approach: Get tests directly with joins
-      console.log('🔍 Fetching tests for test series ID:', testSeries.id);
+      // console.log('🔍 Fetching tests for test series ID:', testSeries.id);
       
       // Use raw SQL to avoid association issues
       const query = `
@@ -454,7 +454,7 @@ router.get('/test-series/by-id/:id/tests', optionalAuth, async (req, res) => {
         type: Sequelize.QueryTypes.SELECT
       });
       
-      console.log('📝 Found tests:', rawTests.length);
+      // console.log('📝 Found tests:', rawTests.length);
       
       // Transform raw results to match expected format
       tests = rawTests;
@@ -465,14 +465,14 @@ router.get('/test-series/by-id/:id/tests', optionalAuth, async (req, res) => {
       
       // Fallback to simpler query
       try {
-        console.log('🔄 Trying fallback query...');
+        // console.log('🔄 Trying fallback query...');
         
         // Just get categories first
         const categories = await Category.findAll({
           where: { test_series_id: testSeries.id, is_active: true }
         });
         
-        console.log('📁 Found categories:', categories.length);
+        // console.log('📁 Found categories:', categories.length);
         
         if (categories.length > 0) {
           // Get subcategories for these categories
@@ -481,7 +481,7 @@ router.get('/test-series/by-id/:id/tests', optionalAuth, async (req, res) => {
             where: { category_id: categoryIds, is_active: true }
           });
           
-          console.log('📂 Found subcategories:', subCategories.length);
+          // console.log('📂 Found subcategories:', subCategories.length);
           
           if (subCategories.length > 0) {
             // Get tests for these subcategories
@@ -493,7 +493,7 @@ router.get('/test-series/by-id/:id/tests', optionalAuth, async (req, res) => {
               }
             });
             
-            console.log('✅ Found tests:', tests.length);
+            // console.log('✅ Found tests:', tests.length);
           }
         }
       } catch (fallbackError) {
@@ -954,7 +954,7 @@ router.get('/tests/:uuid', optionalAuth, async (req, res) => {
 // Get questions for a test with proper access control
 router.get('/tests/:uuid/questions', optionalAuth, async (req, res) => {
   try {
-    console.log('🔍 Getting questions for test:', req.params.uuid);
+    // console.log('🔍 Getting questions for test:', req.params.uuid);
     
     // Find the test with its test series to check pricing
     const test = await Test.findOne({
@@ -1353,8 +1353,8 @@ router.post('/test-sessions/:sessionUuid/resume', requireAuth, async (req, res) 
 // Test submission endpoint by test UUID (REAL IMPLEMENTATION)
 router.post('/tests/:testUuid/submit', requireAuth, async (req, res) => {
   try {
-    console.log('🔍 Submit test by UUID - Test UUID:', req.params.testUuid);
-    console.log('🔍 User ID:', req.user.uuid);
+    // console.log('🔍 Submit test by UUID - Test UUID:', req.params.testUuid);
+    // console.log('🔍 User ID:', req.user.uuid);
 
     // Get the session UUID from the request body
     const sessionUuid = req.body.session_uuid || req.body.sessionId;
@@ -1393,7 +1393,7 @@ router.get('/test-sessions/:sessionUuid/review', async (req, res) => {
   try {
     const { sessionUuid } = req.params;
     
-    console.log('📚 Review API - Session UUID:', sessionUuid);
+    // console.log('📚 Review API - Session UUID:', sessionUuid);
     
     // TEMPORARY: For testing, we'll get the user from the session itself
     const sessionCheck = await TestSession.findOne({
@@ -1408,7 +1408,7 @@ router.get('/test-sessions/:sessionUuid/review', async (req, res) => {
     }
     
     const userId = sessionCheck.user_id;
-    console.log('📚 Review API - Using user ID from session:', userId);
+    // console.log('📚 Review API - Using user ID from session:', userId);
     
     // Find the session - first without status check to debug
     let session = await TestSession.findOne({
@@ -1418,7 +1418,7 @@ router.get('/test-sessions/:sessionUuid/review', async (req, res) => {
       }
     });
 
-    console.log('📚 Review API - Session found:', session ? `Yes (status: ${session.status})` : 'No');
+    // console.log('📚 Review API - Session found:', session ? `Yes (status: ${session.status})` : 'No');
 
     if (!session) {
       return res.status(404).json({
@@ -1429,7 +1429,7 @@ router.get('/test-sessions/:sessionUuid/review', async (req, res) => {
 
     // Check if session is completed
     if (session.status !== 'completed') {
-      console.log('⚠️ Review API - Session not completed, status:', session.status);
+      // console.log('⚠️ Review API - Session not completed, status:', session.status);
       // For now, allow review even if not completed (for testing)
     }
 
@@ -1454,8 +1454,8 @@ router.get('/test-sessions/:sessionUuid/review', async (req, res) => {
     });
 
     // Get all questions with user answers
-    console.log('📚 Review API - Getting questions for test_id:', session.test_id);
-    console.log('📚 Review API - Question model available:', !!Question);
+    // console.log('📚 Review API - Getting questions for test_id:', session.test_id);
+    // console.log('📚 Review API - Question model available:', !!Question);
     
     if (!Question) {
       throw new Error('Question model is not available');
@@ -1471,14 +1471,14 @@ router.get('/test-sessions/:sessionUuid/review', async (req, res) => {
     });
 
     // Get user answers for this session
-    console.log('📚 Review API - Getting user answers for session:', session.id);
+    // console.log('📚 Review API - Getting user answers for session:', session.id);
     const userAnswers = await UserAnswer.findAll({
       where: {
         test_session_id: session.id
       },
       raw: true
     });
-    console.log('📚 Review API - Found user answers:', userAnswers.length);
+    // console.log('📚 Review API - Found user answers:', userAnswers.length);
 
     // Create answer map for quick lookup
     const answerMap = {};
@@ -1581,8 +1581,8 @@ router.get('/test-sessions/:sessionUuid/review', async (req, res) => {
 // Submit test session (REAL IMPLEMENTATION)
 router.post('/test-sessions/:sessionUuid/submit', requireAuth, async (req, res) => {
   try {
-    console.log('🔍 Submit test - Session UUID:', req.params.sessionUuid);
-    console.log('🔍 User ID:', req.user.uuid);
+    // console.log('🔍 Submit test - Session UUID:', req.params.sessionUuid);
+    // console.log('🔍 User ID:', req.user.uuid);
 
     // Call the TestResponseController.submitTest method which has the real logic
     const TestResponseController = require('../../controllers/TestResponseController');

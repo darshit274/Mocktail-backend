@@ -16,7 +16,7 @@ const router = express.Router();
 // GET /api/debug/tables - Check what data exists in key tables
 router.get('/tables', async (req, res) => {
   try {
-    console.log('📊 Debug: Checking database tables...');
+    // console.log('📊 Debug: Checking database tables...');
 
     const results = {
       timestamp: new Date().toISOString(),
@@ -209,7 +209,7 @@ router.get('/tables', async (req, res) => {
       results.table_counts.exam_categories = `Error: ${error.message}`;
     }
 
-    console.log('📊 Debug results:', JSON.stringify(results.table_counts, null, 2));
+    // console.log('📊 Debug results:', JSON.stringify(results.table_counts, null, 2));
     res.status(200).json(results);
 
   } catch (error) {
@@ -226,7 +226,7 @@ router.get('/tables', async (req, res) => {
 router.get('/user/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log(`📊 Debug: Checking user data for ${userId}...`);
+    // console.log(`📊 Debug: Checking user data for ${userId}...`);
 
     const results = {
       timestamp: new Date().toISOString(),
@@ -360,11 +360,11 @@ router.get('/user/:userId', async (req, res) => {
       results.quiz_data.user_answers = { error: error.message };
     }
 
-    console.log(`📊 User ${userId} debug results:`, {
-      sessions: results.quiz_data.test_sessions?.count || 0,
-      leaderboard: results.quiz_data.leaderboard_entries?.count || 0,
-      answers: results.quiz_data.user_answers?.count || 0
-    });
+    // console.log(`📊 User ${userId} debug results:`, {
+//       sessions: results.quiz_data.test_sessions?.count || 0,
+//       leaderboard: results.quiz_data.leaderboard_entries?.count || 0,
+//       answers: results.quiz_data.user_answers?.count || 0
+//     });
 
     res.status(200).json(results);
 

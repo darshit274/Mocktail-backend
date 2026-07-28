@@ -390,12 +390,12 @@ class DynamicTestManagementController {
         }
       };
 
-      console.log('🔍 [Backend] Returning category data:', {
-        category_uuid: category.uuid,
-        test_series_id: category.test_series_id,
-        test_series_uuid: category.testSeries?.uuid,
-        has_testSeries: !!category.testSeries
-      });
+      // console.log('🔍 [Backend] Returning category data:', {
+//         category_uuid: category.uuid,
+//         test_series_id: category.test_series_id,
+//         test_series_uuid: category.testSeries?.uuid,
+//         has_testSeries: !!category.testSeries
+//       });
 
       res.json(responseData);
 

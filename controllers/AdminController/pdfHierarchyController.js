@@ -400,7 +400,7 @@ exports.uploadPdfToCategory = async (req, res, next) => {
   // Stopwatch helper — emits a duration per step so we can SEE where time is
   // going in production. Look at the log lines tagged [PDF-UPLOAD].
   const t0 = Date.now();
-  const mark = (label) => console.log(`[PDF-UPLOAD] ${label}: +${Date.now() - t0}ms`);
+  const mark = (label) => {}; // console.log(`[PDF-UPLOAD] ${label}: +${Date.now() - t0}ms`);
 
   try {
     const { categoryUuid } = req.params;

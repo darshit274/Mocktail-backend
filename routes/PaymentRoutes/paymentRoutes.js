@@ -19,13 +19,13 @@ const {
 
 // Middleware for logging payment requests
 const paymentLogger = (req, res, next) => {
-  console.log(`💰 Payment API: ${req.method} ${req.originalUrl}`);
-  console.log('📋 Request Body:', req.body);
-  console.log('🔑 Headers:', {
-    authorization: req.headers.authorization ? 'Present' : 'Missing',
-    contentType: req.headers['content-type'],
-    origin: req.headers.origin
-  });
+  // console.log(`💰 Payment API: ${req.method} ${req.originalUrl}`);
+  // console.log('📋 Request Body:', req.body);
+  // console.log('🔑 Headers:', {
+//     authorization: req.headers.authorization ? 'Present' : 'Missing',
+//     contentType: req.headers['content-type'],
+//     origin: req.headers.origin
+//   });
   next();
 };
 
@@ -34,11 +34,11 @@ router.use(paymentLogger);
 // Create Razorpay Order
 router.post('/create-order', authToken, async (req, res) => {
   try {
-    console.log('🚀 Payment order creation started');
-    console.log('👤 User:', req.user ? req.user.uuid : 'No user found');
+    // console.log('🚀 Payment order creation started');
+    // console.log('👤 User:', req.user ? req.user.uuid : 'No user found');
     const { testSeriesId, pdfId, pdfCategoryId, planType = 'test_series' } = req.body;
     const userId = req.user.uuid;
-    console.log('📦 Parsed request data:', { testSeriesId, pdfId, pdfCategoryId, planType, userId });
+    // console.log('📦 Parsed request data:', { testSeriesId, pdfId, pdfCategoryId, planType, userId });
 
     // Validate required fields
     if (!testSeriesId && !pdfId && !pdfCategoryId) {
@@ -83,31 +83,31 @@ router.post('/create-order', authToken, async (req, res) => {
 
       amount = Math.round(parseFloat(itemDetails.price) * 100); // Convert to paise
     } else if ((planType === 'pdf' || planType === 'pdf_purchase') && pdfId) {
-      console.log('🔍 PDF Payment - Looking for PDF ID:', pdfId);
+      // console.log('🔍 PDF Payment - Looking for PDF ID:', pdfId);
 
       itemDetails = await Pdfs.findOne({
         where: { id: pdfId },
         attributes: ['id', 'title', 'access_level', 'price', 'currency', 'is_free', 'discount_percentage']
       });
 
-      console.log('📄 PDF Details Retrieved:', itemDetails ? itemDetails.toJSON() : 'NOT FOUND');
+      // console.log('📄 PDF Details Retrieved:', itemDetails ? itemDetails.toJSON() : 'NOT FOUND');
 
       if (!itemDetails) {
-        console.log('❌ PDF not found in database for ID:', pdfId);
+        // console.log('❌ PDF not found in database for ID:', pdfId);
         return res.status(404).json({
           success: false,
           message: 'PDF not found'
         });
       }
 
-      console.log('🔒 PDF Access Check:', {
-        access_level: itemDetails.access_level,
-        is_free: itemDetails.is_free,
-        shouldBypassPayment: itemDetails.access_level === 'free' || itemDetails.is_free
-      });
+      // console.log('🔒 PDF Access Check:', {
+//         access_level: itemDetails.access_level,
+//         is_free: itemDetails.is_free,
+//         shouldBypassPayment: itemDetails.access_level === 'free' || itemDetails.is_free
+//       });
 
       if (itemDetails.access_level === 'free' || itemDetails.is_free) {
-        console.log('🆓 PDF is free, rejecting payment');
+        // console.log('🆓 PDF is free, rejecting payment');
         return res.status(400).json({
           success: false,
           message: 'This PDF is free. No payment required.'
@@ -123,36 +123,36 @@ router.post('/create-order', authToken, async (req, res) => {
 
       amount = Math.round(discountedPrice * 100); // Convert to paise
 
-      console.log('💰 DETAILED PDF pricing calculation:', {
-        pdfId,
-        title: itemDetails.title,
-        rawPrice: itemDetails.price,
-        rawPriceType: typeof itemDetails.price,
-        basePrice,
-        basePriceType: typeof basePrice,
-        discountPercentage,
-        discountedPrice,
-        discountedPriceType: typeof discountedPrice,
-        amountInPaise: amount,
-        amountInRupees: amount / 100,
-        finalAmountType: typeof amount,
-        isValidAmount: amount > 0 && Number.isInteger(amount)
-      });
+      // console.log('💰 DETAILED PDF pricing calculation:', {
+//         pdfId,
+//         title: itemDetails.title,
+//         rawPrice: itemDetails.price,
+//         rawPriceType: typeof itemDetails.price,
+//         basePrice,
+//         basePriceType: typeof basePrice,
+//         discountPercentage,
+//         discountedPrice,
+//         discountedPriceType: typeof discountedPrice,
+//         amountInPaise: amount,
+//         amountInRupees: amount / 100,
+//         finalAmountType: typeof amount,
+//         isValidAmount: amount > 0 && Number.isInteger(amount)
+//       });
 
       // Additional safety check
       if (!amount || amount <= 0 || !Number.isInteger(amount)) {
-        console.log('⚠️ AMOUNT CALCULATION FAILED - Details:', {
-          originalPrice: itemDetails.price,
-          parsedBasePrice: basePrice,
-          calculatedAmount: amount,
-          isNaN: isNaN(amount),
-          isInteger: Number.isInteger(amount)
-        });
+        // console.log('⚠️ AMOUNT CALCULATION FAILED - Details:', {
+//           originalPrice: itemDetails.price,
+//           parsedBasePrice: basePrice,
+//           calculatedAmount: amount,
+//           isNaN: isNaN(amount),
+//           isInteger: Number.isInteger(amount)
+//         });
       }
     } else if (planType === 'pdf_category' && pdfCategoryId) {
       // Whole PDF category purchase — pricing lives on the ROOT category
       // (same model as test series: one payment unlocks everything inside).
-      console.log('🔍 PDF Category Payment - Looking for category:', pdfCategoryId);
+      // console.log('🔍 PDF Category Payment - Looking for category:', pdfCategoryId);
 
       itemDetails = await PdfCategory.findOne({
         where: { uuid: pdfCategoryId },
@@ -189,13 +189,13 @@ router.post('/create-order', authToken, async (req, res) => {
         : basePrice;
       amount = Math.round(discountedPrice * 100); // paise
 
-      console.log('💰 PDF category pricing:', {
-        category: itemDetails.name,
-        basePrice,
-        discountPercentage,
-        discountedPrice,
-        amountInPaise: amount,
-      });
+      // console.log('💰 PDF category pricing:', {
+//         category: itemDetails.name,
+//         basePrice,
+//         discountPercentage,
+//         discountedPrice,
+//         amountInPaise: amount,
+//       });
 
       // Duplicate purchase / pending payment guards (same as test series)
       const completedCategorySubs = await Subscription.findAll({
@@ -255,10 +255,10 @@ router.post('/create-order', authToken, async (req, res) => {
     }
 
     // Validate amount thoroughly
-    console.log('💰 Amount validation:', { amount, type: typeof amount, isInteger: Number.isInteger(amount) });
+    // console.log('💰 Amount validation:', { amount, type: typeof amount, isInteger: Number.isInteger(amount) });
     
     if (!amount || amount <= 0 || !Number.isInteger(amount)) {
-      console.log('❌ Invalid amount detected:', { amount, type: typeof amount });
+      // console.log('❌ Invalid amount detected:', { amount, type: typeof amount });
       return res.status(400).json({
         success: false,
         message: `Invalid amount for payment: ${amount}. Amount must be a positive integer in paise.`
@@ -267,7 +267,7 @@ router.post('/create-order', authToken, async (req, res) => {
 
     // Razorpay test mode has limits - check if amount is reasonable
     if (amount > 50000000) { // 5 lakh rupees in paise
-      console.log('❌ Amount too large for test mode:', amount);
+      // console.log('❌ Amount too large for test mode:', amount);
       return res.status(400).json({
         success: false,
         message: 'Amount exceeds test mode limits'
@@ -348,15 +348,15 @@ router.post('/create-order', authToken, async (req, res) => {
       }
     };
 
-    console.log('🔄 Creating Razorpay order with options:');
-    console.log('📋 Amount:', orderOptions.amount, '(', orderOptions.amount / 100, 'INR )');
-    console.log('🔖 Currency:', orderOptions.currency);
-    console.log('🧾 Receipt:', orderOptions.receipt);
-    console.log('📝 Notes:', JSON.stringify(orderOptions.notes, null, 2));
+    // console.log('🔄 Creating Razorpay order with options:');
+    // console.log('📋 Amount:', orderOptions.amount, '(', orderOptions.amount / 100, 'INR )');
+    // console.log('🔖 Currency:', orderOptions.currency);
+    // console.log('🧾 Receipt:', orderOptions.receipt);
+    // console.log('📝 Notes:', JSON.stringify(orderOptions.notes, null, 2));
 
     const order = await razorpayInstance.orders.create(orderOptions);
 
-    console.log('✅ Razorpay order created:', order.id);
+    // console.log('✅ Razorpay order created:', order.id);
 
     // Create pending subscription record
     const subscriptionData = {
@@ -385,7 +385,7 @@ router.post('/create-order', authToken, async (req, res) => {
 
     await Subscription.create(subscriptionData);
 
-    console.log('✅ Pending subscription created:', subscriptionData.id);
+    // console.log('✅ Pending subscription created:', subscriptionData.id);
 
     // Fetch user details for Razorpay prefill
     const userDetails = await User.findOne({
@@ -422,12 +422,12 @@ router.post('/create-order', authToken, async (req, res) => {
     const userName = userDetails?.fullName || userDetails?.username || 'User';
     const userEmail = userDetails?.email || 'user@example.com';
 
-    console.log('📋 User details for Razorpay prefill:', {
-      name: userName,
-      email: userEmail,
-      phone: userPhone,
-      formattedPhone: formatPhoneNumber(userPhone)
-    });
+    // console.log('📋 User details for Razorpay prefill:', {
+//       name: userName,
+//       email: userEmail,
+//       phone: userPhone,
+//       formattedPhone: formatPhoneNumber(userPhone)
+//     });
 
     // Return order details to frontend
     res.json({
@@ -519,11 +519,11 @@ router.post('/verify-payment', authToken, async (req, res) => {
     );
 
     if (!isValidSignature) {
-      console.log('❌ Invalid payment signature:', {
-        orderId: razorpay_order_id,
-        paymentId: razorpay_payment_id,
-        signature: razorpay_signature
-      });
+      // console.log('❌ Invalid payment signature:', {
+//         orderId: razorpay_order_id,
+//         paymentId: razorpay_payment_id,
+//         signature: razorpay_signature
+//       });
 
       return res.status(400).json({
         success: false,
@@ -574,7 +574,7 @@ router.post('/verify-payment', authToken, async (req, res) => {
         payment_method: payment.method,
         verified_at: new Date().toISOString()
       };
-      console.log('💾 Writing merged metadata:', JSON.stringify(mergedMetadata));
+      // console.log('💾 Writing merged metadata:', JSON.stringify(mergedMetadata));
 
       // Update subscription status — pass plain objects so Sequelize handles the JSON serialisation
       await subscription.update({
@@ -587,16 +587,16 @@ router.post('/verify-payment', authToken, async (req, res) => {
         where: { id: subscription.id },
         attributes: ['id', 'status', 'metadata', 'test_series_id', 'expiry_date']
       });
-      console.log('🔍 Persisted subscription:', {
-        id: verifyPersisted?.id,
-        status: verifyPersisted?.status,
-        test_series_id: verifyPersisted?.test_series_id,
-        expiry_date: verifyPersisted?.expiry_date,
-        metadata_typeof: typeof verifyPersisted?.metadata,
-        metadata: typeof verifyPersisted?.metadata === 'string'
-          ? verifyPersisted.metadata
-          : JSON.stringify(verifyPersisted?.metadata)
-      });
+      // console.log('🔍 Persisted subscription:', {
+//         id: verifyPersisted?.id,
+//         status: verifyPersisted?.status,
+//         test_series_id: verifyPersisted?.test_series_id,
+//         expiry_date: verifyPersisted?.expiry_date,
+//         metadata_typeof: typeof verifyPersisted?.metadata,
+//         metadata: typeof verifyPersisted?.metadata === 'string'
+//           ? verifyPersisted.metadata
+//           : JSON.stringify(verifyPersisted?.metadata)
+//       });
 
       // Update user subscription status
       await User.update({
@@ -606,11 +606,11 @@ router.post('/verify-payment', authToken, async (req, res) => {
         where: { uuid: userId }
       });
 
-      console.log('✅ Payment verified and subscription activated:', {
-        subscriptionId: subscription.id,
-        paymentId: razorpay_payment_id,
-        amount: payment.amount / 100
-      });
+      // console.log('✅ Payment verified and subscription activated:', {
+//         subscriptionId: subscription.id,
+//         paymentId: razorpay_payment_id,
+//         amount: payment.amount / 100
+//       });
 
       res.json({
         success: true,
@@ -660,14 +660,14 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
     const signature = req.headers['x-razorpay-signature'];
     const body = req.body;
 
-    console.log('🔔 Razorpay webhook received:', {
-      signature: signature ? 'present' : 'missing',
-      bodyLength: body.length
-    });
+    // console.log('🔔 Razorpay webhook received:', {
+//       signature: signature ? 'present' : 'missing',
+//       bodyLength: body.length
+//     });
 
     // Verify webhook signature
     if (!verifyWebhookSignature(body, signature)) {
-      console.log('❌ Invalid webhook signature');
+      // console.log('❌ Invalid webhook signature');
       return res.status(400).json({
         success: false,
         message: 'Invalid webhook signature'
@@ -675,7 +675,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
     }
 
     const event = JSON.parse(body.toString());
-    console.log('📨 Webhook event:', event.event);
+    // console.log('📨 Webhook event:', event.event);
 
     // Handle different webhook events
     switch (event.event) {
@@ -692,7 +692,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         break;
         
       default:
-        console.log('🔔 Unhandled webhook event:', event.event);
+        // console.log('🔔 Unhandled webhook event:', event.event);
     }
 
     res.json({ success: true, message: 'Webhook processed' });
@@ -742,7 +742,7 @@ router.get('/status/:orderId', authToken, async (req, res) => {
           paymentDetails = await razorpayInstance.payments.fetch(metadata.razorpay_payment_id);
         }
       } catch (error) {
-        console.log('Could not fetch payment details:', error.message);
+        // console.log('Could not fetch payment details:', error.message);
       }
     }
 
@@ -778,7 +778,7 @@ router.get('/status/:orderId', authToken, async (req, res) => {
 async function handlePaymentCaptured(payload) {
   try {
     const payment = payload.payment.entity;
-    console.log('✅ Payment captured:', payment.id);
+    // console.log('✅ Payment captured:', payment.id);
 
     // Update subscription if exists
     await Subscription.update({
@@ -799,7 +799,7 @@ async function handlePaymentCaptured(payload) {
 async function handlePaymentFailed(payload) {
   try {
     const payment = payload.payment.entity;
-    console.log('❌ Payment failed:', payment.id);
+    // console.log('❌ Payment failed:', payment.id);
 
     // Update subscription status
     await Subscription.update({
@@ -820,7 +820,7 @@ async function handlePaymentFailed(payload) {
 async function handleOrderPaid(payload) {
   try {
     const order = payload.order.entity;
-    console.log('💰 Order paid:', order.id);
+    // console.log('💰 Order paid:', order.id);
 
     // Additional processing if needed
     
@@ -845,7 +845,7 @@ router.delete('/cleanup-pending', authToken, async (req, res) => {
       attributes: ['id', 'transaction_id', 'user_id', 'created_at', 'amount_paid']
     });
 
-    console.log(`🧹 Found ${oldPendingPayments.length} old pending payments to clean up`);
+    // console.log(`🧹 Found ${oldPendingPayments.length} old pending payments to clean up`);
 
     // Delete old pending payments
     const deletedCount = await Subscription.destroy({

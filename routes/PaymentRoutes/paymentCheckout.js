@@ -203,7 +203,7 @@ router.get('/:orderId', async (req, res) => {
           color: '#0A1F66'
         },
         handler: function (response) {
-          console.log('Payment successful:', response);
+          // console.log('Payment successful:', response);
           
           document.body.innerHTML = '<div class="payment-container" style="text-align: center; padding: 40px;"><div style="color: #27ae60; font-size: 64px; margin-bottom: 20px;">✅</div><h2 style="color: #27ae60; margin-bottom: 16px;">Payment Successful!</h2><p style="color: #666; margin-bottom: 20px;">Your payment has been processed successfully.</p><div style="background: #f8f9fa; padding: 16px; border-radius: 8px; margin: 20px 0;"><p style="margin: 8px 0;"><strong>Payment ID:</strong> ' + response.razorpay_payment_id + '</p><p style="margin: 8px 0;"><strong>Order ID:</strong> ' + response.razorpay_order_id + '</p></div><p style="color: #999; font-size: 14px;">You can now close this window and return to the app.</p></div>';
           
@@ -225,7 +225,7 @@ router.get('/:orderId', async (req, res) => {
         modal: {
           ondismiss: function() {
             hideLoading();
-            console.log('Payment modal dismissed');
+            // console.log('Payment modal dismissed');
           }
         }
       };
@@ -234,7 +234,7 @@ router.get('/:orderId', async (req, res) => {
         const rzp = new Razorpay(options);
         
         rzp.on('payment.failed', function (response) {
-          console.log('Payment failed:', response);
+          // console.log('Payment failed:', response);
           hideLoading();
           showError('Payment failed: ' + response.error.description);
         });

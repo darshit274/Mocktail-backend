@@ -26,11 +26,11 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log(`🧪 Debug API test server running on http://localhost:${PORT}`);
-  console.log('📊 Available debug endpoints:');
-  console.log(`   GET http://localhost:${PORT}/api/debug/tables`);
-  console.log(`   GET http://localhost:${PORT}/api/debug/user/:userId`);
-  console.log(`   GET http://localhost:${PORT}/api/debug/raw-query/:table`);
+  // console.log(`🧪 Debug API test server running on http://localhost:${PORT}`);
+  // console.log('📊 Available debug endpoints:');
+  // console.log(`   GET http://localhost:${PORT}/api/debug/tables`);
+  // console.log(`   GET http://localhost:${PORT}/api/debug/user/:userId`);
+  // console.log(`   GET http://localhost:${PORT}/api/debug/raw-query/:table`);
 });
 
 module.exports = app;

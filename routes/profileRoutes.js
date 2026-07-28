@@ -34,21 +34,21 @@ const upload = multer({
     fields: 10 // Max 10 fields
   },
   fileFilter: (req, file, cb) => {
-    console.log('🔍 File filter called:', { 
-      originalname: file.originalname, 
-      mimetype: file.mimetype,
-      fieldname: file.fieldname 
-    });
+    // console.log('🔍 File filter called:', { 
+//       originalname: file.originalname, 
+//       mimetype: file.mimetype,
+//       fieldname: file.fieldname 
+//     });
     
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
 
     if (mimetype && extname) {
-      console.log('✅ File allowed');
+      // console.log('✅ File allowed');
       return cb(null, true);
     } else {
-      console.log('❌ File rejected');
+      // console.log('❌ File rejected');
       cb(new Error('Only image files are allowed'));
     }
   }
@@ -101,7 +101,7 @@ router.get('/profile', authToken, async (req, res) => {
 
 // Add error handling middleware for multer
 const handleMulterError = (err, req, res, next) => {
-  console.log('🚨 Multer error occurred:', err);
+  // console.log('🚨 Multer error occurred:', err);
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({
@@ -122,15 +122,15 @@ const handleMulterError = (err, req, res, next) => {
 
 // Update user profile
 router.put('/profile', authToken, (req, res, next) => {
-  console.log('🔄 Profile update request received');
-  console.log('📄 Headers:', req.headers);
-  console.log('📏 Content-Length:', req.headers['content-length']);
-  console.log('🔗 Content-Type:', req.headers['content-type']);
+  // console.log('🔄 Profile update request received');
+  // console.log('📄 Headers:', req.headers);
+  // console.log('📏 Content-Length:', req.headers['content-length']);
+  // console.log('🔗 Content-Type:', req.headers['content-type']);
   next();
 }, (req, res, next) => {
   // Check if this is a base64 avatar upload (JSON request)
   if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
-    console.log('📝 JSON request detected - bypassing multer');
+    // console.log('📝 JSON request detected - bypassing multer');
     return next();
   }
   // Otherwise use multer for multipart uploads
@@ -142,10 +142,10 @@ router.put('/profile', authToken, (req, res, next) => {
   });
 }, async (req, res) => {
   try {
-    console.log('✅ Multer processing completed');
-    console.log('📁 File:', req.file);
-    console.log('📝 Body:', req.body);
-    console.log('🔍 Raw body type:', typeof req.body);
+    // console.log('✅ Multer processing completed');
+    // console.log('📁 File:', req.file);
+    // console.log('📝 Body:', req.body);
+    // console.log('🔍 Raw body type:', typeof req.body);
     
     const {
       fullName,
@@ -172,20 +172,20 @@ router.put('/profile', authToken, (req, res, next) => {
     // Handle avatar upload - both multipart file and base64
     if (req.file) {
       // Multipart file upload
-      console.log('🔄 Processing multipart file upload');
+      // console.log('🔄 Processing multipart file upload');
       const user = await User.findByPk(req.user.uuid);
       if (user.avatarUrl && user.avatarUrl.startsWith('/uploads/')) {
         const oldAvatarPath = path.join(__dirname, '..', user.avatarUrl);
         try {
           await fs.unlink(oldAvatarPath);
         } catch (error) {
-          console.log('Error deleting old avatar:', error.message);
+          // console.log('Error deleting old avatar:', error.message);
         }
       }
       updateData.avatarUrl = `/uploads/avatars/${req.file.filename}`;
     } else if (req.body.avatarBase64) {
       // Base64 upload
-      console.log('🔄 Processing base64 avatar upload');
+      // console.log('🔄 Processing base64 avatar upload');
       try {
         const base64Data = req.body.avatarBase64.replace(/^data:image\/[a-z]+;base64,/, '');
         const fileBuffer = Buffer.from(base64Data, 'base64');
@@ -209,12 +209,12 @@ router.put('/profile', authToken, (req, res, next) => {
           try {
             await fs.unlink(oldAvatarPath);
           } catch (error) {
-            console.log('Error deleting old avatar:', error.message);
+            // console.log('Error deleting old avatar:', error.message);
           }
         }
         
         updateData.avatarUrl = `/uploads/avatars/${filename}`;
-        console.log('✅ Base64 avatar saved:', updateData.avatarUrl);
+        // console.log('✅ Base64 avatar saved:', updateData.avatarUrl);
       } catch (error) {
         console.error('❌ Base64 avatar upload failed:', error);
         return res.status(400).json({

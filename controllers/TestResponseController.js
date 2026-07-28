@@ -339,15 +339,15 @@ class TestResponseController {
   async calculateTestResults(testSession, userAnswers, transaction) {
     const test = testSession.test;
 
-    console.log('🎯 CALCULATE TEST RESULTS DEBUG:', {
-      test_id: test?.id,
-      test_title: test?.title,
-      test_negative_marking: test?.negative_marking_enabled,
-      test_series_id: test?.testSeries?.id,
-      test_series_name: test?.testSeries?.name,
-      test_series_negative_marking: test?.testSeries?.has_negative_marking,
-      test_series_negative_marks: test?.testSeries?.negative_marks
-    });
+    // console.log('🎯 CALCULATE TEST RESULTS DEBUG:', {
+//       test_id: test?.id,
+//       test_title: test?.title,
+//       test_negative_marking: test?.negative_marking_enabled,
+//       test_series_id: test?.testSeries?.id,
+//       test_series_name: test?.testSeries?.name,
+//       test_series_negative_marking: test?.testSeries?.has_negative_marking,
+//       test_series_negative_marks: test?.testSeries?.negative_marks
+//     });
     const totalQuestions = test.questions?.length || 0;
     
     let correctAnswers = 0;
@@ -392,20 +392,20 @@ class TestResponseController {
           negativeMarkValue = test.negative_marks_per_wrong || 0.25;
         }
 
-        console.log('🔍 NEGATIVE MARKING DEBUG:', {
-          question_id: userAnswer.question?.id,
-          category_id: userAnswer.question?.category_id,
-          test_negative_marking: test.negative_marking_enabled,
-          hasNegativeMarking,
-          negativeMarkValue,
-          wrongAnswers
-        });
+        // console.log('🔍 NEGATIVE MARKING DEBUG:', {
+//           question_id: userAnswer.question?.id,
+//           category_id: userAnswer.question?.category_id,
+//           test_negative_marking: test.negative_marking_enabled,
+//           hasNegativeMarking,
+//           negativeMarkValue,
+//           wrongAnswers
+//         });
 
         if (hasNegativeMarking) {
           negativeMarks += parseFloat(negativeMarkValue);
-          console.log('✅ Applied negative marking:', negativeMarks);
+          // console.log('✅ Applied negative marking:', negativeMarks);
         } else {
-          console.log('❌ No negative marking applied');
+          // console.log('❌ No negative marking applied');
         }
       }
 

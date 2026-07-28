@@ -12,19 +12,19 @@ async function makeTestIdNullable() {
       database: process.env.DB_NAME || 'mocktail_db'
     });
 
-    console.log('🔗 Connected to database');
+    // console.log('🔗 Connected to database');
 
     // Check current structure
     const [rows] = await connection.execute(`DESCRIBE questions`);
-    console.log('Current questions table structure:');
+    // console.log('Current questions table structure:');
     rows.forEach(row => {
       if (row.Field === 'test_id') {
-        console.log(`  test_id: ${row.Type}, Null: ${row.Null}, Default: ${row.Default}`);
+        // console.log(`  test_id: ${row.Type}, Null: ${row.Null}, Default: ${row.Default}`);
       }
     });
 
     // Make test_id nullable
-    console.log('\n🔧 Making test_id nullable...');
+    // console.log('\n🔧 Making test_id nullable...');
     await connection.execute(`
       ALTER TABLE questions 
       MODIFY COLUMN test_id INT NULL,
@@ -34,12 +34,12 @@ async function makeTestIdNullable() {
       ON UPDATE CASCADE ON DELETE SET NULL
     `);
 
-    console.log('✅ test_id is now nullable with proper foreign key constraint');
+    // console.log('✅ test_id is now nullable with proper foreign key constraint');
 
     // Verify the change
     const [newRows] = await connection.execute(`DESCRIBE questions`);
     const testIdField = newRows.find(row => row.Field === 'test_id');
-    console.log(`New test_id structure: ${testIdField.Type}, Null: ${testIdField.Null}, Default: ${testIdField.Default}`);
+    // console.log(`New test_id structure: ${testIdField.Type}, Null: ${testIdField.Null}, Default: ${testIdField.Default}`);
 
   } catch (error) {
     console.error('❌ Error making test_id nullable:', error.message);
@@ -47,7 +47,7 @@ async function makeTestIdNullable() {
   } finally {
     if (connection) {
       await connection.end();
-      console.log('🔐 Database connection closed');
+      // console.log('🔐 Database connection closed');
     }
   }
 }

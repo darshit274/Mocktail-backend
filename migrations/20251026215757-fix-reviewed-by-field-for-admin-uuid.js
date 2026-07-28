@@ -10,7 +10,7 @@ module.exports = {
         'question_reports_ibfk_3'
       );
     } catch (error) {
-      console.log('Constraint question_reports_ibfk_3 does not exist, skipping removal');
+      // console.log('Constraint question_reports_ibfk_3 does not exist, skipping removal');
     }
 
     // Change the column type from INTEGER to VARCHAR to support Admin UUIDs

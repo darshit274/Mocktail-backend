@@ -616,23 +616,23 @@ class QuestionImportController {
       });
 
       // If questions were successfully imported, update category node_type to question_holder
-      console.log(`🔍 DEBUG: Checking if need to update category node_type. successCount: ${successCount}, category_id: ${importRecord.category_id}`);
+      // console.log(`🔍 DEBUG: Checking if need to update category node_type. successCount: ${successCount}, category_id: ${importRecord.category_id}`);
       if (successCount > 0) {
         const category = await Category.findByPk(importRecord.category_id);
-        console.log(`🔍 DEBUG: Found category:`, {
-          id: category?.id,
-          name: category?.name,
-          node_type: category?.node_type
-        });
+        // console.log(`🔍 DEBUG: Found category:`, {
+//           id: category?.id,
+//           name: category?.name,
+//           node_type: category?.node_type
+//         });
         if (category && category.node_type === 'unset') {
-          console.log(`🔄 DEBUG: Updating category node_type from 'unset' to 'question_holder'`);
+          // console.log(`🔄 DEBUG: Updating category node_type from 'unset' to 'question_holder'`);
           await category.update({ node_type: 'question_holder' });
-          console.log(`✅ Updated category "${category.name}" node_type to question_holder after importing ${successCount} questions`);
+          // console.log(`✅ Updated category "${category.name}" node_type to question_holder after importing ${successCount} questions`);
         } else {
-          console.log(`ℹ️ DEBUG: Category node_type not updated. Current node_type: ${category?.node_type}`);
+          // console.log(`ℹ️ DEBUG: Category node_type not updated. Current node_type: ${category?.node_type}`);
         }
       } else {
-        console.log(`ℹ️ DEBUG: No questions imported (successCount: ${successCount}), skipping category node_type update`);
+        // console.log(`ℹ️ DEBUG: No questions imported (successCount: ${successCount}), skipping category node_type update`);
       }
 
       // Clean up uploaded file

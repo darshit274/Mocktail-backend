@@ -10,14 +10,14 @@ router.post('/categories', adminAuth, pdfUploadController.createPdfCategory);
 
 // PDF Upload routes
 router.post('/upload', (req, res, next) => {
-  console.log('=== ROUTE HIT: PDF UPLOAD ===');
-  console.log('Time:', new Date().toISOString());
-  console.log('Method:', req.method);
-  console.log('URL:', req.url);
+  // console.log('=== ROUTE HIT: PDF UPLOAD ===');
+  // console.log('Time:', new Date().toISOString());
+  // console.log('Method:', req.method);
+  // console.log('URL:', req.url);
   next();
 }, adminAuth, (req, res, next) => {
-  console.log('=== AUTH PASSED ===');
-  console.log('Admin ID:', req.admin?.id);
+  // console.log('=== AUTH PASSED ===');
+  // console.log('Admin ID:', req.admin?.id);
   next();
 }, handlePDFUpload, pdfUploadController.uploadPdf);
 router.get('/list', adminAuth, pdfUploadController.getPdfs);

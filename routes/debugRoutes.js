@@ -10,7 +10,7 @@ router.get('/latest-session/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
 
-        console.log(`🔍 DEBUG: Fetching latest session for user: ${userId}`);
+        // console.log(`🔍 DEBUG: Fetching latest session for user: ${userId}`);
 
         const latestSession = await TestSession.findOne({
             where: {
@@ -33,12 +33,12 @@ router.get('/latest-session/:userId', async (req, res) => {
             });
         }
 
-        console.log('📊 Latest session data:', {
-            id: latestSession.id,
-            session_data: latestSession.session_data,
-            session_data_type: typeof latestSession.session_data,
-            category_uuid: latestSession.session_data?.category_uuid
-        });
+        // console.log('📊 Latest session data:', {
+//             id: latestSession.id,
+//             session_data: latestSession.session_data,
+//             session_data_type: typeof latestSession.session_data,
+//             category_uuid: latestSession.session_data?.category_uuid
+//         });
 
         res.json({
             success: true,

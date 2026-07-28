@@ -78,7 +78,7 @@ const checkAllUsersSubscriptionStatus = async () => {
             await updateUserSubscriptionStatus(user.uuid);
         }
 
-        console.log(`Updated subscription status for ${usersWithExpiredSubscriptions.length} users`);
+        // console.log(`Updated subscription status for ${usersWithExpiredSubscriptions.length} users`);
     } catch (error) {
         console.error('Error checking all users subscription status:', error);
         throw error;

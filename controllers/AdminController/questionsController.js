@@ -45,7 +45,7 @@ const upload = multer({
 // Helper function to generate and send template
 const generateAndSendTemplate = async (req, res, next, format) => {
     try {
-        console.log(`📊 Starting template generation for format: ${format}`);
+        // console.log(`📊 Starting template generation for format: ${format}`);
 
         // Create sample data for template
         const sampleData = [
@@ -92,7 +92,7 @@ const generateAndSendTemplate = async (req, res, next, format) => {
             
             res.setHeader('Content-Type', 'text/csv');
             res.setHeader('Content-Disposition', 'attachment; filename="questions_template.csv"');
-            console.log('✅ CSV template sent successfully');
+            // console.log('✅ CSV template sent successfully');
             return res.send(csv);
         } else {
             // Generate Excel
@@ -104,7 +104,7 @@ const generateAndSendTemplate = async (req, res, next, format) => {
             
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.setHeader('Content-Disposition', 'attachment; filename="questions_template.xlsx"');
-            console.log('✅ Excel template sent successfully');
+            // console.log('✅ Excel template sent successfully');
             return res.send(buffer);
         }
 
@@ -117,9 +117,9 @@ const generateAndSendTemplate = async (req, res, next, format) => {
 // Helper function to handle file imports
 const handleFileImport = async (req, res, next) => {
     try {
-        console.log('📤 Starting file import process...');
-        console.log('📋 Request body:', req.body);
-        console.log('📁 Files:', req.files);
+        // console.log('📤 Starting file import process...');
+        // console.log('📋 Request body:', req.body);
+        // console.log('📁 Files:', req.files);
 
         if (!req.files || !req.files.file) {
             return next(new ErrorHandler('No file uploaded', 400));
@@ -132,8 +132,8 @@ const handleFileImport = async (req, res, next) => {
             return next(new ErrorHandler('Category ID is required', 400));
         }
 
-        console.log(`📄 Processing file: ${file.name}`);
-        console.log(`📂 Category ID: ${categoryId}`);
+        // console.log(`📄 Processing file: ${file.name}`);
+        // console.log(`📂 Category ID: ${categoryId}`);
 
         // Determine file type
         const fileExtension = path.extname(file.name).toLowerCase();
@@ -158,11 +158,11 @@ const handleFileImport = async (req, res, next) => {
         
         // Move uploaded file
         await file.mv(filepath);
-        console.log(`💾 File saved to: ${filepath}`);
+        // console.log(`💾 File saved to: ${filepath}`);
 
         // Parse and validate file
         const parsedData = await parseImportFile(filepath, fileType);
-        console.log(`📊 Parsed ${parsedData.length} rows from file`);
+        // console.log(`📊 Parsed ${parsedData.length} rows from file`);
 
         // Validate and convert to questions format
         const { validQuestions, errors } = await validateImportData(parsedData, categoryId);
@@ -185,7 +185,7 @@ const handleFileImport = async (req, res, next) => {
         // Clean up file
         fs.unlinkSync(filepath);
 
-        console.log(`✅ Successfully imported ${createdQuestions.length} questions`);
+        // console.log(`✅ Successfully imported ${createdQuestions.length} questions`);
 
         res.status(201).json({
             success: true,
@@ -212,7 +212,7 @@ const handleTemplateDownload = async (req, res, next) => {
             return next(new ErrorHandler('Invalid template format. Use excel or csv', 400));
         }
 
-        console.log(`📊 Generating ${format.toUpperCase()} template...`);
+        // console.log(`📊 Generating ${format.toUpperCase()} template...`);
 
         // Create sample data for template
         const sampleData = [
@@ -259,7 +259,7 @@ const handleTemplateDownload = async (req, res, next) => {
             
             res.setHeader('Content-Type', 'text/csv');
             res.setHeader('Content-Disposition', 'attachment; filename="questions_template.csv"');
-            console.log('✅ CSV template sent successfully');
+            // console.log('✅ CSV template sent successfully');
             return res.send(csv);
         } else {
             // Generate Excel
@@ -271,7 +271,7 @@ const handleTemplateDownload = async (req, res, next) => {
             
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.setHeader('Content-Disposition', 'attachment; filename="questions_template.xlsx"');
-            console.log('✅ Excel template sent successfully');
+            // console.log('✅ Excel template sent successfully');
             return res.send(buffer);
         }
 
@@ -542,14 +542,14 @@ exports.getQuestionsStats = async (req, res, next) => {
     try {
         // Check if this is a template download request
         if (req.query.download === 'template') {
-            console.log('📥 Template download requested via stats endpoint');
+            // console.log('📥 Template download requested via stats endpoint');
             const format = req.query.format || 'excel';
             return await generateAndSendTemplate(req, res, next, format);
         }
         
         // Check if this is a file upload request
         if (req.query.action === 'import' && req.method === 'POST') {
-            console.log('📤 File upload requested via stats endpoint');
+            // console.log('📤 File upload requested via stats endpoint');
             return await handleFileUpload(req, res, next);
         }
         
@@ -629,7 +629,7 @@ exports.getQuestionFilters = async (req, res, next) => {
 // Download Excel template for question import
 exports.downloadExcelTemplate = async (req, res, next) => {
     try {
-        console.log('📥 Excel template download requested');
+        // console.log('📥 Excel template download requested');
         
         // Create sample data for template
         const sampleData = [
@@ -678,7 +678,7 @@ exports.downloadExcelTemplate = async (req, res, next) => {
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename="questions_template.xlsx"');
         
-        console.log('✅ Excel template generated successfully');
+        // console.log('✅ Excel template generated successfully');
         res.send(buffer);
 
     } catch (error) {
@@ -690,7 +690,7 @@ exports.downloadExcelTemplate = async (req, res, next) => {
 // Download CSV template for question import
 exports.downloadCsvTemplate = async (req, res, next) => {
     try {
-        console.log('📥 CSV template download requested');
+        // console.log('📥 CSV template download requested');
         
         // Create sample data for template
         const sampleData = [
@@ -736,7 +736,7 @@ exports.downloadCsvTemplate = async (req, res, next) => {
         res.setHeader('Content-Type', 'text/csv');
         res.setHeader('Content-Disposition', 'attachment; filename="questions_template.csv"');
         
-        console.log('✅ CSV template generated successfully');
+        // console.log('✅ CSV template generated successfully');
         res.send(csv);
 
     } catch (error) {
@@ -748,7 +748,7 @@ exports.downloadCsvTemplate = async (req, res, next) => {
 // Helper function to parse import file
 const parseImportFile = async (filepath, fileType) => {
     try {
-        console.log(`📖 Parsing ${fileType} file: ${filepath}`);
+        // console.log(`📖 Parsing ${fileType} file: ${filepath}`);
         
         const XLSX = require('xlsx');
         const workbook = XLSX.readFile(filepath);
@@ -757,7 +757,7 @@ const parseImportFile = async (filepath, fileType) => {
         
         // Convert to JSON
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
-        console.log(`📄 Found ${jsonData.length} rows in file`);
+        // console.log(`📄 Found ${jsonData.length} rows in file`);
         
         return jsonData;
     } catch (error) {
@@ -781,7 +781,7 @@ const validateImportData = async (data, categoryId) => {
     const validQuestions = [];
     const errors = [];
 
-    console.log(`🔍 Validating ${data.length} rows...`);
+    // console.log(`🔍 Validating ${data.length} rows...`);
 
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
@@ -849,7 +849,7 @@ const validateImportData = async (data, categoryId) => {
         }
     }
     
-    console.log(`✅ Validation complete: ${validQuestions.length} valid, ${errors.length} errors`);
+    // console.log(`✅ Validation complete: ${validQuestions.length} valid, ${errors.length} errors`);
     
     return { validQuestions, errors };
 };
@@ -857,7 +857,7 @@ const validateImportData = async (data, categoryId) => {
 // Handle file upload for question import
 const handleFileUpload = async (req, res, next) => {
     try {
-        console.log('📤 Starting file upload process...');
+        // console.log('📤 Starting file upload process...');
 
         // Check if file was uploaded using multer
         if (!req.file) {
@@ -867,14 +867,14 @@ const handleFileUpload = async (req, res, next) => {
         const file = req.file;
         const categoryId = req.body.category_id;
         
-        console.log('📄 File details:', {
-            name: file.originalname,
-            mimetype: file.mimetype,
-            size: file.size,
-            filename: file.filename,
-            path: file.path,
-            categoryId
-        });
+        // console.log('📄 File details:', {
+//             name: file.originalname,
+//             mimetype: file.mimetype,
+//             size: file.size,
+//             filename: file.filename,
+//             path: file.path,
+//             categoryId
+//         });
         
         // Validate category_id
         if (!categoryId) {
@@ -902,11 +902,11 @@ const handleFileUpload = async (req, res, next) => {
             return next(new ErrorHandler('Only Excel (.xlsx, .xls) and CSV files are allowed', 400));
         }
         
-        console.log(`✅ File validation passed: ${file.originalname} (${fileExtension})`);
+        // console.log(`✅ File validation passed: ${file.originalname} (${fileExtension})`);
         
         // File is already saved by multer at file.path
         const tempFilePath = file.path;
-        console.log(`💾 File uploaded and saved at: ${tempFilePath}`);
+        // console.log(`💾 File uploaded and saved at: ${tempFilePath}`);
         
         try {
             // Parse the file
@@ -940,12 +940,12 @@ const handleFileUpload = async (req, res, next) => {
                 })
             });
             
-            console.log('📊 Import validation results:', {
-                totalRows: rawData.length,
-                validRows: validQuestions.length,
-                errorRows: errors.length,
-                importId: importRecord.id
-            });
+            // console.log('📊 Import validation results:', {
+//                 totalRows: rawData.length,
+//                 validRows: validQuestions.length,
+//                 errorRows: errors.length,
+//                 importId: importRecord.id
+//             });
             
             // Return validation results
             res.json({
@@ -966,7 +966,7 @@ const handleFileUpload = async (req, res, next) => {
             // Clean up temp file
             if (fs.existsSync(tempFilePath)) {
                 fs.unlinkSync(tempFilePath);
-                console.log('🗑️ Temporary file cleaned up');
+                // console.log('🗑️ Temporary file cleaned up');
             }
         }
         
@@ -980,7 +980,7 @@ const handleFileUpload = async (req, res, next) => {
 exports.getImportStatus = async (req, res, next) => {
     try {
         const { importId } = req.params;
-        console.log(`📋 Getting import status for: ${importId}`);
+        // console.log(`📋 Getting import status for: ${importId}`);
         
         const importRecord = await QuestionImport.findByPk(importId);
         
@@ -1014,7 +1014,7 @@ exports.getImportStatus = async (req, res, next) => {
 exports.getImportPreview = async (req, res, next) => {
     try {
         const { importId } = req.params;
-        console.log(`👁️ Getting import preview for: ${importId}`);
+        // console.log(`👁️ Getting import preview for: ${importId}`);
         
         const importRecord = await QuestionImport.findByPk(importId);
         
@@ -1063,7 +1063,7 @@ exports.getImportPreview = async (req, res, next) => {
 exports.confirmImport = async (req, res, next) => {
     try {
         const { importId } = req.params;
-        console.log(`✅ Confirming import for: ${importId}`);
+        // console.log(`✅ Confirming import for: ${importId}`);
         
         const importRecord = await QuestionImport.findByPk(importId);
         
@@ -1094,7 +1094,7 @@ exports.confirmImport = async (req, res, next) => {
             return next(new ErrorHandler('No validated questions found in import record', 400));
         }
         
-        console.log(`📥 Importing ${validatedQuestions.length} questions directly to category ${importRecord.category_id}...`);
+        // console.log(`📥 Importing ${validatedQuestions.length} questions directly to category ${importRecord.category_id}...`);
         
         const { v4: uuidv4 } = require('uuid');
         let successCount = 0;
@@ -1120,7 +1120,7 @@ exports.confirmImport = async (req, res, next) => {
                 importedQuestionIds.push(createdQuestion.id);
                 successCount++;
                 
-                console.log(`✅ Imported question ${i + 1}: ${questionData.question_text?.substring(0, 50)}...`);
+                // console.log(`✅ Imported question ${i + 1}: ${questionData.question_text?.substring(0, 50)}...`);
                 
             } catch (error) {
                 failureCount++;
@@ -1146,27 +1146,27 @@ exports.confirmImport = async (req, res, next) => {
             })
         });
         
-        console.log(`🎉 Import completed! Success: ${successCount}, Failures: ${failureCount}`);
+        // console.log(`🎉 Import completed! Success: ${successCount}, Failures: ${failureCount}`);
 
         // If questions were successfully imported, update category node_type to question_holder
-        console.log(`🔍 DEBUG: Checking if need to update category node_type. successCount: ${successCount}, category_id: ${importRecord.category_id}`);
+        // console.log(`🔍 DEBUG: Checking if need to update category node_type. successCount: ${successCount}, category_id: ${importRecord.category_id}`);
         if (successCount > 0) {
           const { Category } = require('../../models');
           const category = await Category.findByPk(importRecord.category_id);
-          console.log(`🔍 DEBUG: Found category:`, {
-            id: category?.id,
-            name: category?.name,
-            node_type: category?.node_type
-          });
+          // console.log(`🔍 DEBUG: Found category:`, {
+//             id: category?.id,
+//             name: category?.name,
+//             node_type: category?.node_type
+//           });
           if (category && category.node_type === 'unset') {
-            console.log(`🔄 DEBUG: Updating category node_type from 'unset' to 'question_holder'`);
+            // console.log(`🔄 DEBUG: Updating category node_type from 'unset' to 'question_holder'`);
             await category.update({ node_type: 'question_holder' });
-            console.log(`✅ Updated category "${category.name}" node_type to question_holder after importing ${successCount} questions`);
+            // console.log(`✅ Updated category "${category.name}" node_type to question_holder after importing ${successCount} questions`);
           } else {
-            console.log(`ℹ️ DEBUG: Category node_type not updated. Current node_type: ${category?.node_type}`);
+            // console.log(`ℹ️ DEBUG: Category node_type not updated. Current node_type: ${category?.node_type}`);
           }
         } else {
-          console.log(`ℹ️ DEBUG: No questions imported (successCount: ${successCount}), skipping category node_type update`);
+          // console.log(`ℹ️ DEBUG: No questions imported (successCount: ${successCount}), skipping category node_type update`);
         }
         
         res.json({

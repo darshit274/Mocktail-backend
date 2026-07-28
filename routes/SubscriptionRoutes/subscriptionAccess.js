@@ -48,11 +48,11 @@ router.get('/test-series/:seriesId', authToken, async (req, res) => {
     const { seriesId } = req.params;
     const userId = req.user.uuid;
 
-    console.log('📱 [MOBILE APP] Checking subscription access:', {
-      userId: userId.substring(0, 8),
-      seriesId,
-      timestamp: new Date().toISOString()
-    });
+    // console.log('📱 [MOBILE APP] Checking subscription access:', {
+//       userId: userId.substring(0, 8),
+//       seriesId,
+//       timestamp: new Date().toISOString()
+//     });
 
     // First, get the test series details
     let testSeries = await TestSeries.findOne({
@@ -112,12 +112,12 @@ router.get('/test-series/:seriesId', authToken, async (req, res) => {
     });
 
     if (activeSubscription) {
-      console.log('✅ [MOBILE APP] User has active subscription:', {
-        subscriptionId: activeSubscription.id,
-        userId: userId.substring(0, 8),
-        seriesId,
-        seriesName: testSeries.name
-      });
+      // console.log('✅ [MOBILE APP] User has active subscription:', {
+//         subscriptionId: activeSubscription.id,
+//         userId: userId.substring(0, 8),
+//         seriesId,
+//         seriesName: testSeries.name
+//       });
       return res.json({
         success: true,
         data: {
@@ -156,13 +156,13 @@ router.get('/test-series/:seriesId', authToken, async (req, res) => {
     const hasPendingPayment = pendingSubscription &&
       (new Date() - new Date(pendingSubscription.created_at)) < (30 * 60 * 1000); // 30 minutes
 
-    console.log('🚫 [MOBILE APP] User does not have access:', {
-      userId: userId.substring(0, 8),
-      seriesId,
-      seriesName: testSeries.name,
-      hasPendingPayment: !!hasPendingPayment,
-      seriesPrice: testSeries.price
-    });
+    // console.log('🚫 [MOBILE APP] User does not have access:', {
+//       userId: userId.substring(0, 8),
+//       seriesId,
+//       seriesName: testSeries.name,
+//       hasPendingPayment: !!hasPendingPayment,
+//       seriesPrice: testSeries.price
+//     });
 
     return res.json({
       success: true,
@@ -332,7 +332,7 @@ router.get('/pdf/:pdfId', authToken, async (req, res) => {
     const { pdfId } = req.params;
     const userId = req.user.uuid;
 
-    console.log('🔍 Checking PDF access:', { userId: userId.substring(0, 8), pdfId });
+    // console.log('🔍 Checking PDF access:', { userId: userId.substring(0, 8), pdfId });
 
     // Get PDF details
     const pdf = await Pdfs.findOne({
@@ -366,12 +366,12 @@ router.get('/pdf/:pdfId', authToken, async (req, res) => {
     }
 
     // For premium PDFs, check if user has purchased this specific PDF
-    console.log('🔍 Looking for PDF subscription with query:', {
-      user_id: userId,
-      test_series_id: null,
-      status: 'completed',
-      pdf_id_search: pdfId
-    });
+    // console.log('🔍 Looking for PDF subscription with query:', {
+//       user_id: userId,
+//       test_series_id: null,
+//       status: 'completed',
+//       pdf_id_search: pdfId
+//     });
 
     // First, let's see what subscriptions exist for this user
     const allUserSubscriptions = await Subscription.findAll({
@@ -379,13 +379,13 @@ router.get('/pdf/:pdfId', authToken, async (req, res) => {
       attributes: ['id', 'user_id', 'test_series_id', 'status', 'metadata', 'amount_paid', 'created_at']
     });
 
-    console.log('📋 All user subscriptions:', allUserSubscriptions.map(sub => ({
-      id: sub.id,
-      test_series_id: sub.test_series_id,
-      status: sub.status,
-      metadata: sub.metadata,
-      amount_paid: sub.amount_paid
-    })));
+    // console.log('📋 All user subscriptions:', allUserSubscriptions.map(sub => ({
+//       id: sub.id,
+//       test_series_id: sub.test_series_id,
+//       status: sub.status,
+//       metadata: sub.metadata,
+//       amount_paid: sub.amount_paid
+//     })));
 
     // PDF purchases have test_series_id = NULL and metadata.pdf_id = <pdfId>.
     // We deliberately do NOT filter by `metadata` here because JSON-column
@@ -404,31 +404,31 @@ router.get('/pdf/:pdfId', authToken, async (req, res) => {
       attributes: ['id', 'purchase_date', 'expiry_date', 'amount_paid', 'metadata']
     });
 
-    console.log('🔍 Candidate PDF subscriptions:', allCompletedPDFSubscriptions.length);
+    // console.log('🔍 Candidate PDF subscriptions:', allCompletedPDFSubscriptions.length);
     // Dump exact shape of metadata for every candidate so we can see what we got
     allCompletedPDFSubscriptions.forEach((sub) => {
-      console.log(`  sub ${sub.id}: metadata typeof=${typeof sub.metadata}`,
-        typeof sub.metadata === 'string'
-          ? `value="${sub.metadata.substring(0, 200)}${sub.metadata.length > 200 ? '...' : ''}"`
-          : `value=${JSON.stringify(sub.metadata)}`);
+      // console.log(`  sub ${sub.id}: metadata typeof=${typeof sub.metadata}`,
+//         typeof sub.metadata === 'string'
+//           ? `value="${sub.metadata.substring(0, 200)}${sub.metadata.length > 200 ? '...' : ''}"`
+//           : `value=${JSON.stringify(sub.metadata)}`);
     });
 
     const pdfSubscription = allCompletedPDFSubscriptions.find((sub) => {
       const metadata = parseSubscriptionMetadata(sub.metadata);
       const storedPdfId = metadata && metadata.pdf_id;
       const matches = storedPdfId === pdfId;
-      console.log(`  → sub ${sub.id}: parsed pdf_id=${storedPdfId}, target=${pdfId}, match=${matches}`);
+      // console.log(`  → sub ${sub.id}: parsed pdf_id=${storedPdfId}, target=${pdfId}, match=${matches}`);
       return matches;
     });
 
-    console.log('🎯 PDF subscription query result:', pdfSubscription ? {
-      id: pdfSubscription.id,
-      metadata: pdfSubscription.metadata,
-      amount_paid: pdfSubscription.amount_paid
-    } : 'NOT FOUND');
+    // console.log('🎯 PDF subscription query result:', pdfSubscription ? {
+//       id: pdfSubscription.id,
+//       metadata: pdfSubscription.metadata,
+//       amount_paid: pdfSubscription.amount_paid
+//     } : 'NOT FOUND');
 
     if (pdfSubscription) {
-      console.log('✅ User has purchased this PDF:', pdfSubscription.id);
+      // console.log('✅ User has purchased this PDF:', pdfSubscription.id);
       return res.json({
         success: true,
         data: {
@@ -474,7 +474,7 @@ router.get('/pdf/:pdfId', authToken, async (req, res) => {
           }
           const categoryPurchase = await findCategoryPurchase(userId, root.uuid);
           if (categoryPurchase) {
-            console.log('✅ User has purchased the parent PDF category:', root.uuid);
+            // console.log('✅ User has purchased the parent PDF category:', root.uuid);
             return res.json({
               success: true,
               data: {
@@ -496,7 +496,7 @@ router.get('/pdf/:pdfId', authToken, async (req, res) => {
       }
     }
 
-    console.log('🚫 User has not purchased this PDF');
+    // console.log('🚫 User has not purchased this PDF');
     return res.json({
       success: true,
       data: {
@@ -628,12 +628,12 @@ const checkTestAccess = async (req, res, next) => {
 // Helper function to check user access (with category-level check)
 async function checkUserTestSeriesAccess(userId, seriesId, categoryId = null) {
   try {
-    console.log('🔍 [SUBCATEGORY] Checking user access:', {
-      userId: userId.substring(0, 8),
-      seriesId,
-      categoryId: categoryId || 'N/A',
-      timestamp: new Date().toISOString()
-    });
+    // console.log('🔍 [SUBCATEGORY] Checking user access:', {
+//       userId: userId.substring(0, 8),
+//       seriesId,
+//       categoryId: categoryId || 'N/A',
+//       timestamp: new Date().toISOString()
+//     });
 
     // If categoryId is provided, check if it's a free-in-paid category
     if (categoryId) {
@@ -652,10 +652,10 @@ async function checkUserTestSeriesAccess(userId, seriesId, categoryId = null) {
 
       // If category is marked as free in paid series, grant access immediately
       if (category && category.is_free_in_paid_series) {
-        console.log('✅ [FREE-IN-PAID] Category is marked as free:', {
-          categoryId: category.uuid,
-          userId: userId.substring(0, 8)
-        });
+        // console.log('✅ [FREE-IN-PAID] Category is marked as free:', {
+//           categoryId: category.uuid,
+//           userId: userId.substring(0, 8)
+//         });
         return { hasAccess: true, accessType: 'free_in_paid_series' };
       }
     }
@@ -696,21 +696,21 @@ async function checkUserTestSeriesAccess(userId, seriesId, categoryId = null) {
     });
 
     if (activeSubscription) {
-      console.log('✅ [SUBCATEGORY] User has access:', {
-        subscriptionId: activeSubscription.id,
-        userId: userId.substring(0, 8),
-        seriesId,
-        testSeriesId: testSeries.id
-      });
+      // console.log('✅ [SUBCATEGORY] User has access:', {
+//         subscriptionId: activeSubscription.id,
+//         userId: userId.substring(0, 8),
+//         seriesId,
+//         testSeriesId: testSeries.id
+//       });
       return { hasAccess: true, accessType: 'subscription' };
     }
 
-    console.log('🚫 [SUBCATEGORY] User denied access:', {
-      userId: userId.substring(0, 8),
-      seriesId,
-      testSeriesId: testSeries.id,
-      reason: 'No active subscription'
-    });
+    // console.log('🚫 [SUBCATEGORY] User denied access:', {
+//       userId: userId.substring(0, 8),
+//       seriesId,
+//       testSeriesId: testSeries.id,
+//       reason: 'No active subscription'
+//     });
     return { hasAccess: false, reason: 'No active subscription' };
 
   } catch (error) {

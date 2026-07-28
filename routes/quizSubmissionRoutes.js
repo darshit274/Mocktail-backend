@@ -18,15 +18,15 @@ router.post('/submit', async (req, res) => {
             totalQuestions: frontendTotalQuestions // Get actual total questions from frontend
         } = req.body;
 
-        console.log('Quiz submission received:', {
-            userId,
-            testSeriesId,
-            categoryUuid, // ← ADDED for debugging
-            answersCount: answers.length,
-            totalTimeSpent,
-            markedForReviewCount,
-            frontendTotalQuestions
-        });
+        // console.log('Quiz submission received:', {
+//             userId,
+//             testSeriesId,
+//             categoryUuid, // ← ADDED for debugging
+//             answersCount: answers.length,
+//             totalTimeSpent,
+//             markedForReviewCount,
+//             frontendTotalQuestions
+//         });
 
         // Calculate score from answers
         // IMPORTANT: totalQuestions should be the ACTUAL total, not just answered questions
@@ -37,13 +37,13 @@ router.post('/submit', async (req, res) => {
         const wrongAnswers = answeredQuestions - correctAnswers;
         const unansweredQuestions = totalQuestions - answeredQuestions;
 
-        console.log('🧮 QUIZ SCORE CALCULATION:', {
-            totalQuestions,
-            answeredQuestions,
-            correctAnswers,
-            wrongAnswers,
-            unansweredQuestions
-        });
+        // console.log('🧮 QUIZ SCORE CALCULATION:', {
+//             totalQuestions,
+//             answeredQuestions,
+//             correctAnswers,
+//             wrongAnswers,
+//             unansweredQuestions
+//         });
 
         // Find or create user
         let user = await User.findOne({ where: { uuid: userId } });
@@ -58,7 +58,7 @@ router.post('/submit', async (req, res) => {
                 isEmailVerified: true,
                 role: 'student'
             });
-            console.log(`Created user for quiz submission: ${user.uuid}`);
+            // console.log(`Created user for quiz submission: ${user.uuid}`);
         }
 
         // Handle both mobile app and web app flows:
@@ -70,7 +70,7 @@ router.post('/submit', async (req, res) => {
 
         // Try to find category using categoryUuid first (mobile app flow)
         if (categoryUuid) {
-            console.log('🔍 Mobile app flow: Finding category by categoryUuid:', categoryUuid);
+            // console.log('🔍 Mobile app flow: Finding category by categoryUuid:', categoryUuid);
             category = await Category.findOne({
                 where: { uuid: categoryUuid },
                 include: [{
@@ -81,18 +81,18 @@ router.post('/submit', async (req, res) => {
 
             if (category) {
                 testSeries = category.testSeries;
-                console.log('✅ Found category via categoryUuid:', {
-                    categoryId: category.id,
-                    categoryName: category.name,
-                    categoryUuid: category.uuid,
-                    testSeriesName: testSeries?.name
-                });
+                // console.log('✅ Found category via categoryUuid:', {
+//                     categoryId: category.id,
+//                     categoryName: category.name,
+//                     categoryUuid: category.uuid,
+//                     testSeriesName: testSeries?.name
+//                 });
             }
         }
 
         // If not found by categoryUuid, try testSeriesId as Category UUID (web app flow)
         if (!category) {
-            console.log('🔍 Web app flow: Finding category by testSeriesId as Category UUID:', testSeriesId);
+            // console.log('🔍 Web app flow: Finding category by testSeriesId as Category UUID:', testSeriesId);
             category = await Category.findOne({
                 where: { uuid: testSeriesId },
                 include: [{
@@ -103,18 +103,18 @@ router.post('/submit', async (req, res) => {
 
             if (category) {
                 testSeries = category.testSeries;
-                console.log('✅ Found category via testSeriesId:', {
-                    categoryId: category.id,
-                    categoryName: category.name,
-                    categoryUuid: category.uuid,
-                    testSeriesName: testSeries?.name
-                });
+                // console.log('✅ Found category via testSeriesId:', {
+//                     categoryId: category.id,
+//                     categoryName: category.name,
+//                     categoryUuid: category.uuid,
+//                     testSeriesName: testSeries?.name
+//                 });
             }
         }
 
         // If still not found, try testSeriesId as actual TestSeries UUID (mobile app with correct flow)
         if (!testSeries) {
-            console.log('🔍 Alternative flow: Finding TestSeries by testSeriesId as TestSeries UUID:', testSeriesId);
+            // console.log('🔍 Alternative flow: Finding TestSeries by testSeriesId as TestSeries UUID:', testSeriesId);
             testSeries = await TestSeries.findOne({
                 where: { uuid: testSeriesId }
             });
@@ -129,10 +129,10 @@ router.post('/submit', async (req, res) => {
                     }]
                 });
 
-                console.log('✅ Found TestSeries and Category separately:', {
-                    testSeriesName: testSeries.name,
-                    categoryName: category?.name
-                });
+                // console.log('✅ Found TestSeries and Category separately:', {
+//                     testSeriesName: testSeries.name,
+//                     categoryName: category?.name
+//                 });
             }
         }
 
@@ -154,22 +154,22 @@ router.post('/submit', async (req, res) => {
             });
         }
 
-        console.log('✅ Final resolved data:', {
-            categoryId: category.id,
-            categoryName: category.name,
-            categoryUuid: category.uuid,
-            testSeriesId: testSeries.id,
-            testSeriesName: testSeries.name,
-            testSeriesUuid: testSeries.uuid
-        });
+        // console.log('✅ Final resolved data:', {
+//             categoryId: category.id,
+//             categoryName: category.name,
+//             categoryUuid: category.uuid,
+//             testSeriesId: testSeries.id,
+//             testSeriesName: testSeries.name,
+//             testSeriesUuid: testSeries.uuid
+//         });
 
-        console.log('🔍 TEST SERIES DATABASE VALUES:', {
-            uuid: testSeries.uuid,
-            name: testSeries.name,
-            has_negative_marking: testSeries.has_negative_marking,
-            negative_marks: testSeries.negative_marks,
-            negativeMarksType: typeof testSeries.negative_marks
-        });
+        // console.log('🔍 TEST SERIES DATABASE VALUES:', {
+//             uuid: testSeries.uuid,
+//             name: testSeries.name,
+//             has_negative_marking: testSeries.has_negative_marking,
+//             negative_marks: testSeries.negative_marks,
+//             negativeMarksType: typeof testSeries.negative_marks
+//         });
 
         // Calculate score with actual marks per question
         let obtainedMarks = 0;
@@ -253,20 +253,20 @@ router.post('/submit', async (req, res) => {
             // Percentage stays the same - it's based on correct/attempted, not final score
             // percentage is already calculated above as (correctAnswers / answeredQuestions) × 100
 
-            console.log('✅ CATEGORY-LEVEL NEGATIVE MARKING APPLIED:', {
-                obtainedMarks,
-                wrongAnswersByCategory,
-                categoryNegativeMarks,
-                totalNegativeMarks: negativeMarks,
-                finalScore,
-                percentage: percentage + '%'
-            });
+            // console.log('✅ CATEGORY-LEVEL NEGATIVE MARKING APPLIED:', {
+//                 obtainedMarks,
+//                 wrongAnswersByCategory,
+//                 categoryNegativeMarks,
+//                 totalNegativeMarks: negativeMarks,
+//                 finalScore,
+//                 percentage: percentage + '%'
+//             });
         } else {
-            console.log('❌ NO WRONG ANSWERS - NO NEGATIVE MARKING NEEDED:', {
-                obtainedMarks,
-                finalScore,
-                percentage: percentage + '%'
-            });
+            // console.log('❌ NO WRONG ANSWERS - NO NEGATIVE MARKING NEEDED:', {
+//                 obtainedMarks,
+//                 finalScore,
+//                 percentage: percentage + '%'
+//             });
         }
 
         const score = finalScore;
@@ -304,7 +304,7 @@ router.post('/submit', async (req, res) => {
                 description: `Questions for ${category.name}`,
                 is_active: true
             });
-            console.log(`✅ Created default subcategory for category: ${category.name}`);
+            // console.log(`✅ Created default subcategory for category: ${category.name}`);
         }
 
         // Create a test session record (required for LeaderboardEntry and history)
@@ -323,7 +323,7 @@ router.post('/submit', async (req, res) => {
             sub_category_id: subCategory.id
         });
 
-        console.log(`✅ Created test session record: ${test.title}`);
+        // console.log(`✅ Created test session record: ${test.title}`);
         // Create a test session with test history fields
         const testSession = await TestSession.create({
             id: uuidv4(),
@@ -359,7 +359,7 @@ router.post('/submit', async (req, res) => {
             }
         });
 
-        console.log(`✅ Created TestSession: ${testSession.id}`);
+        // console.log(`✅ Created TestSession: ${testSession.id}`);
 
         // Save individual answers to UserAnswer table
         // This enables session-based solution retrieval and tracking user progress
@@ -377,7 +377,7 @@ router.post('/submit', async (req, res) => {
             });
 
             await Promise.all(answerPromises);
-            console.log(`✅ Saved ${answers.length} UserAnswer records for session ${testSession.id}`);
+            // console.log(`✅ Saved ${answers.length} UserAnswer records for session ${testSession.id}`);
         } catch (userAnswerError) {
             console.error('Error saving UserAnswer records:', userAnswerError);
             // Don't fail the submission if UserAnswer save fails
@@ -405,7 +405,7 @@ router.post('/submit', async (req, res) => {
             is_valid: true
         });
 
-        console.log(`Created leaderboard entry: ${leaderboardEntry.id}`);
+        // console.log(`Created leaderboard entry: ${leaderboardEntry.id}`);
 
         res.json({
             success: true,
@@ -470,7 +470,7 @@ router.delete('/clear-series/:testSeriesId', async (req, res) => {
     try {
         const { testSeriesId } = req.params;
 
-        console.log(`Clearing all data for test series: ${testSeriesId}`);
+        // console.log(`Clearing all data for test series: ${testSeriesId}`);
 
         // Find test series
         const testSeries = await TestSeries.findOne({ where: { uuid: testSeriesId } });
@@ -496,7 +496,7 @@ router.delete('/clear-series/:testSeriesId', async (req, res) => {
         const deletedCategories = await Category.destroy({ where: { id: categoryIds } });
         const deletedTestSeries = await TestSeries.destroy({ where: { id: testSeries.id } });
 
-        console.log(`Deleted: ${deletedLeaderboard} leaderboard entries, ${deletedSessions} sessions, ${deletedTests} tests`);
+        // console.log(`Deleted: ${deletedLeaderboard} leaderboard entries, ${deletedSessions} sessions, ${deletedTests} tests`);
 
         res.json({
             success: true,
@@ -524,7 +524,7 @@ router.get('/latest-result/:userId/:testSeriesId', async (req, res) => {
     try {
         const { userId, testSeriesId } = req.params;
 
-        console.log(`🔍 Getting latest result for user ${userId} in test series ${testSeriesId}`);
+        // console.log(`🔍 Getting latest result for user ${userId} in test series ${testSeriesId}`);
 
         // Find the latest leaderboard entry for this user and test series
         const latestEntry = await LeaderboardEntry.findOne({
@@ -547,7 +547,7 @@ router.get('/latest-result/:userId/:testSeriesId', async (req, res) => {
             });
         }
 
-        console.log(`✅ Found latest result: ${latestEntry.percentage}% (entry ID: ${latestEntry.id})`);
+        // console.log(`✅ Found latest result: ${latestEntry.percentage}% (entry ID: ${latestEntry.id})`);
 
         res.json({
             success: true,
@@ -580,7 +580,7 @@ router.get('/latest-result/:userId/:testSeriesId', async (req, res) => {
  */
 router.post('/nuclear-clean', async (req, res) => {
     try {
-        console.log('NUCLEAR CLEAN: Clearing all old leaderboard data...');
+        // console.log('NUCLEAR CLEAN: Clearing all old leaderboard data...');
 
         // Delete all leaderboard entries that are NOT from today's submissions
         const today = new Date();
@@ -594,7 +594,7 @@ router.post('/nuclear-clean', async (req, res) => {
             }
         });
 
-        console.log(`NUCLEAR CLEAN: Deleted ${deletedEntries} old leaderboard entries`);
+        // console.log(`NUCLEAR CLEAN: Deleted ${deletedEntries} old leaderboard entries`);
 
         res.json({
             success: true,

@@ -13,7 +13,7 @@ class LeaderboardController {
     try {
       const { limit = 50, test_series_id, category_id } = req.query;
 
-      console.log("Fetching dynamic leaderboard data...");
+      // console.log("Fetching dynamic leaderboard data...");
 
       // Try to get real leaderboard data from LeaderboardEntry table
       let leaderboardData = [];
@@ -59,7 +59,7 @@ class LeaderboardController {
           limit: parseInt(limit),
         });
 
-        console.log(`Found ${leaderboardEntries.length} leaderboard entries`);
+        // console.log(`Found ${leaderboardEntries.length} leaderboard entries`);
 
         if (leaderboardEntries.length > 0) {
           // Process real leaderboard data
@@ -101,10 +101,10 @@ class LeaderboardController {
           }));
         }
       } catch (dbError) {
-        console.log(
-          "Error fetching from LeaderboardEntry, trying TestSession...",
-          dbError.message
-        );
+        // console.log(
+//           "Error fetching from LeaderboardEntry, trying TestSession...",
+//           dbError.message
+//         );
 
         // Fallback to TestSession data if LeaderboardEntry is empty
         const testSessions = await TestSession.findAll({
@@ -134,7 +134,7 @@ class LeaderboardController {
           limit: parseInt(limit),
         });
 
-        console.log(`Found ${testSessions.length} completed test sessions`);
+        // console.log(`Found ${testSessions.length} completed test sessions`);
 
         if (testSessions.length > 0) {
           leaderboardData = testSessions.map((session, index) => ({
@@ -176,7 +176,7 @@ class LeaderboardController {
 
       // If no real data available, fall back to demo data
       if (leaderboardData.length === 0) {
-        console.log("No test data found, generating demo leaderboard");
+        // console.log("No test data found, generating demo leaderboard");
 
         const demoUsers = [
           { name: "Top Performer", score: 2850, tests: 15 },
@@ -243,7 +243,7 @@ class LeaderboardController {
         });
       }
 
-      console.log(`Fetching rank for user: ${userId}`);
+      // console.log(`Fetching rank for user: ${userId}`);
 
       let userRank = null;
 
@@ -297,10 +297,10 @@ class LeaderboardController {
           };
         }
       } catch (dbError) {
-        console.log(
-          "Error fetching from LeaderboardEntry, trying TestSession...",
-          dbError.message
-        );
+        // console.log(
+//           "Error fetching from LeaderboardEntry, trying TestSession...",
+//           dbError.message
+//         );
 
         // Fallback to TestSession data
         const userSessions = await TestSession.findAll({
@@ -370,7 +370,7 @@ class LeaderboardController {
 
       // If no real data, generate demo rank
       if (!userRank) {
-        console.log("No test data found for user, generating demo rank");
+        // console.log("No test data found for user, generating demo rank");
         userRank = {
           rank: Math.floor(Math.random() * 500) + 10,
           totalScore: Math.floor(Math.random() * 2000) + 1500,
@@ -381,7 +381,7 @@ class LeaderboardController {
         };
       }
 
-      console.log(userRank);
+      // console.log(userRank);
 
       res.json({
         success: true,
@@ -403,7 +403,7 @@ class LeaderboardController {
       const { testSeriesId } = req.params;
       const { limit = 20 } = req.query;
 
-      console.log(`🔍 Fetching leaderboard for UUID: ${testSeriesId}`);
+      // console.log(`🔍 Fetching leaderboard for UUID: ${testSeriesId}`);
 
       let leaderboardData = [];
       let strictTestIds = [];
@@ -448,7 +448,7 @@ class LeaderboardController {
         if (strictTestIds.length === 0) {
           // If not found as test series, check if it's a category UUID
           if (!testSeries) {
-            console.log(`❌ Not found as test series UUID, checking if it's a category UUID...`);
+            // console.log(`❌ Not found as test series UUID, checking if it's a category UUID...`);
 
             const { Category } = require("../models");
             const category = await Category.findOne({
@@ -462,9 +462,9 @@ class LeaderboardController {
 
             if (category && category.testSeries) {
               testSeries = category.testSeries;
-              console.log(`✅ Found as category UUID! Using parent test series: ${testSeries.name} (${testSeries.uuid})`);
+              // console.log(`✅ Found as category UUID! Using parent test series: ${testSeries.name} (${testSeries.uuid})`);
             } else {
-              console.log(`❌ UUID not found as test series OR category`);
+              // console.log(`❌ UUID not found as test series OR category`);
               return res.json({
                 success: true,
                 message: "No participants found for this test series yet",
@@ -479,7 +479,7 @@ class LeaderboardController {
               });
             }
           } else {
-            console.log(`✅ Found as test series UUID: ${testSeries.name}`);
+            // console.log(`✅ Found as test series UUID: ${testSeries.name}`);
           }
 
           // Find all tests that belong to this test series
@@ -515,17 +515,17 @@ class LeaderboardController {
           const oldTestIds = oldTests.map((test) => test.id);
           const allTestIds = [...testIds, ...oldTestIds];
 
-          console.log(
-            `Looking for leaderboard entries with test IDs: NewTest[${testIds.join(
-              ","
-            )}] + OldTest[${oldTestIds.join(",")}]`
-          );
-          console.log("All test IDs for query:", allTestIds);
-          console.log("Query will be: test_id IN", allTestIds);
+          // console.log(
+          //   `Looking for leaderboard entries with test IDs: NewTest[${testIds.join(
+          //     ","
+          //   )}] + OldTest[${oldTestIds.join(",")}]`
+          // );
+          // console.log("All test IDs for query:", allTestIds);
+          // console.log("Query will be: test_id IN", allTestIds);
 
           // Check if we have any test IDs to search for
           if (allTestIds.length === 0) {
-            console.log("No test IDs found - returning empty leaderboard");
+            // console.log("No test IDs found - returning empty leaderboard");
             return res.json({
               success: true,
               message: "No participants found for this test series yet",
@@ -558,11 +558,11 @@ class LeaderboardController {
             }
           }
         }
-        console.log(
-          `STRICT filtering: Using ONLY test IDs: [${strictTestIds.join(
-            ","
-          )}] for test series ${testSeriesId}`
-        );
+        // console.log(
+        //   `STRICT filtering: Using ONLY test IDs: [${strictTestIds.join(
+        //     ","
+        //   )}] for test series ${testSeriesId}`
+        // );
 
         if (strictTestIds.length === 0) {
           return res.json({
@@ -600,9 +600,9 @@ class LeaderboardController {
           raw: false,
         });
 
-        console.log(
-          `Found ${allEntries.length} entries for test series ${testSeriesId}`
-        );
+        // console.log(
+//           `Found ${allEntries.length} entries for test series ${testSeriesId}`
+//         );
 
         // ✅ FIXED: Group by user and get FIRST ATTEMPT (earliest completion_date) instead of best score
         const userFirstAttempts = {};
@@ -630,9 +630,9 @@ class LeaderboardController {
           .slice(0, parseInt(limit));
 
         if (detailedEntries.length > 0) {
-          console.log(
-            `✅ Found ${detailedEntries.length} unique users for test series (ranked by FIRST ATTEMPT)`
-          );
+          // console.log(
+//             `✅ Found ${detailedEntries.length} unique users for test series (ranked by FIRST ATTEMPT)`
+//           );
           const totalUser = detailedEntries.length
           leaderboardData = detailedEntries.map((entry, index) => ({
             rank: index + 1,
@@ -652,9 +652,9 @@ class LeaderboardController {
           }));
         } else {
           // Fallback to TestSession data if LeaderboardEntry is empty
-          console.log(
-            "No LeaderboardEntry found, checking TestSession data..."
-          );
+          // console.log(
+//             "No LeaderboardEntry found, checking TestSession data..."
+//           );
 
           // Find the test series by UUID to get its ID
           const testSeries = await TestSeries.findOne({
@@ -663,12 +663,12 @@ class LeaderboardController {
           });
 
           if (testSeries) {
-            console.log(
-              `Found test series: ${testSeries.name} (ID: ${testSeries.id})`
-            );
-            console.log(
-              `Looking for test sessions for test series ID: ${testSeries.id}`
-            );
+            // console.log(
+//               `Found test series: ${testSeries.name} (ID: ${testSeries.id})`
+//             );
+            // console.log(
+//               `Looking for test sessions for test series ID: ${testSeries.id}`
+//             );
 
             // Get ALL test sessions for tests in this specific test series
             const testSessions = await TestSession.findAll({
@@ -697,9 +697,9 @@ class LeaderboardController {
               ],
             });
 
-            console.log(
-              `Found ${testSessions.length} completed test sessions for this test series`
-            );
+            // console.log(
+//               `Found ${testSessions.length} completed test sessions for this test series`
+//             );
 
             if (testSessions.length > 0) {
               // ✅ FIXED: Group by user and get FIRST ATTEMPT only
@@ -726,9 +726,9 @@ class LeaderboardController {
                 })
                 .slice(0, parseInt(limit));
 
-              console.log(
-                `✅ Found ${sortedSessions.length} unique users (ranked by FIRST ATTEMPT) - Fallback from TestSession`
-              );
+              // console.log(
+//                 `✅ Found ${sortedSessions.length} unique users (ranked by FIRST ATTEMPT) - Fallback from TestSession`
+//               );
               const totalUser = sortedSessions?.length
 
               leaderboardData = sortedSessions.map((session, index) => ({
@@ -763,30 +763,30 @@ class LeaderboardController {
               }));
             }
           } else {
-            console.log(`No test series found for UUID: ${testSeriesId}`);
+            // console.log(`No test series found for UUID: ${testSeriesId}`);
           }
         }
       } catch (dbError) {
-        console.log("Error fetching test series leaderboard:", dbError.message);
+        // console.log("Error fetching test series leaderboard:", dbError.message);
       }
 
       // Check if we have any test sessions in database at all
       if (leaderboardData.length === 0) {
-        console.log(
-          "No test sessions found for specific test series. This suggests:"
-        );
-        console.log("1. No tests have been completed in this test series yet");
-        console.log("2. The quiz was taken using a different/older system");
-        console.log(
-          "3. The test series UUID in the URL does not match any real test series"
-        );
+        // console.log(
+//           "No test sessions found for specific test series. This suggests:"
+//         );
+        // console.log("1. No tests have been completed in this test series yet");
+        // console.log("2. The quiz was taken using a different/older system");
+        // console.log(
+//           "3. The test series UUID in the URL does not match any real test series"
+//         );
       }
 
       // If still no real data, return empty leaderboard instead of fake demo data
       if (leaderboardData.length === 0) {
-        console.log(
-          "No real test sessions found for this test series - returning empty leaderboard"
-        );
+        // console.log(
+//           "No real test sessions found for this test series - returning empty leaderboard"
+//         );
 
         res.json({
           success: true,

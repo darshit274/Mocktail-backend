@@ -9,7 +9,7 @@ async function updatePDFSize() {
     });
 
     if (!pdf) {
-      console.log('Sample PDF not found');
+      // console.log('Sample PDF not found');
       return;
     }
 
@@ -20,7 +20,7 @@ async function updatePDFSize() {
       file_size: stats.size
     });
 
-    console.log('✅ Updated PDF size to:', stats.size);
+    // console.log('✅ Updated PDF size to:', stats.size);
 
   } catch (error) {
     console.error('❌ Error:', error);

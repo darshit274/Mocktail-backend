@@ -65,17 +65,17 @@ const initializeFirebase = () => {
       }
     }
 
-    console.log('✅ Firebase Admin SDK initialized successfully');
+    // console.log('✅ Firebase Admin SDK initialized successfully');
     return firebaseApp;
 
   } catch (error) {
     console.error('❌ Failed to initialize Firebase Admin SDK:', error.message);
-    console.log('🔧 Please ensure you have properly configured Firebase credentials');
-    console.log('📋 Required environment variables:');
-    console.log('   - FIREBASE_PROJECT_ID');
-    console.log('   - FIREBASE_PRIVATE_KEY');
-    console.log('   - FIREBASE_CLIENT_EMAIL');
-    console.log('   Or place firebase-service-account.json in the config directory');
+    // console.log('🔧 Please ensure you have properly configured Firebase credentials');
+    // console.log('📋 Required environment variables:');
+    // console.log('   - FIREBASE_PROJECT_ID');
+    // console.log('   - FIREBASE_PRIVATE_KEY');
+    // console.log('   - FIREBASE_CLIENT_EMAIL');
+    // console.log('   Or place firebase-service-account.json in the config directory');
     
     return null;
   }
@@ -147,7 +147,7 @@ const sendPushNotification = async (token, payload) => {
     };
 
     const response = await messaging.send(message);
-    console.log('✅ Push notification sent successfully:', response);
+    // console.log('✅ Push notification sent successfully:', response);
     return { success: true, messageId: response };
 
   } catch (error) {
@@ -201,7 +201,7 @@ const sendMulticastPushNotification = async (tokens, payload) => {
 
     const response = await messaging.sendMulticast(message);
     
-    console.log(`✅ Multicast notification sent: ${response.successCount}/${tokens.length} successful`);
+    // console.log(`✅ Multicast notification sent: ${response.successCount}/${tokens.length} successful`);
     
     if (response.failureCount > 0) {
       console.warn(`⚠️  ${response.failureCount} notifications failed`);
@@ -265,7 +265,7 @@ const sendTopicNotification = async (topic, payload) => {
     };
 
     const response = await messaging.send(message);
-    console.log(`✅ Topic notification sent to "${topic}":`, response);
+    // console.log(`✅ Topic notification sent to "${topic}":`, response);
     return { success: true, messageId: response };
 
   } catch (error) {
@@ -283,7 +283,7 @@ const subscribeToTopic = async (tokens, topic) => {
     }
 
     const response = await messaging.subscribeToTopic(tokens, topic);
-    console.log(`✅ Successfully subscribed ${response.successCount} tokens to topic "${topic}"`);
+    // console.log(`✅ Successfully subscribed ${response.successCount} tokens to topic "${topic}"`);
     
     if (response.failureCount > 0) {
       console.warn(`⚠️  Failed to subscribe ${response.failureCount} tokens to topic "${topic}"`);
@@ -306,7 +306,7 @@ const unsubscribeFromTopic = async (tokens, topic) => {
     }
 
     const response = await messaging.unsubscribeFromTopic(tokens, topic);
-    console.log(`✅ Successfully unsubscribed ${response.successCount} tokens from topic "${topic}"`);
+    // console.log(`✅ Successfully unsubscribed ${response.successCount} tokens from topic "${topic}"`);
     
     if (response.failureCount > 0) {
       console.warn(`⚠️  Failed to unsubscribe ${response.failureCount} tokens from topic "${topic}"`);

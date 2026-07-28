@@ -15,7 +15,7 @@ const { Pdfs } = require('../models');
 const { validatePDFFile } = require('../utils/pdfUpload');
 
 async function cleanupInvalidPDFs() {
-  console.log('🔍 Starting cleanup of invalid PDF files...\n');
+  // console.log('🔍 Starting cleanup of invalid PDF files...\n');
 
   try {
     // Find all PDFs
@@ -23,7 +23,7 @@ async function cleanupInvalidPDFs() {
       attributes: ['id', 'title', 'file_path', 'file_size', 'original_filename', 'created_at']
     });
 
-    console.log(`📊 Total PDFs in database: ${allPDFs.length}\n`);
+    // console.log(`📊 Total PDFs in database: ${allPDFs.length}\n`);
 
     let invalidCount = 0;
     let deletedCount = 0;
@@ -73,27 +73,27 @@ async function cleanupInvalidPDFs() {
           reason: reason
         });
 
-        console.log(`❌ INVALID PDF #${invalidCount}:`);
-        console.log(`   ID: ${pdf.id}`);
-        console.log(`   Title: ${pdf.title}`);
-        console.log(`   Size: ${pdf.file_size} bytes`);
-        console.log(`   File: ${path.basename(pdf.file_path)}`);
-        console.log(`   Reason: ${reason}`);
-        console.log(`   Created: ${pdf.created_at}`);
-        console.log('');
+        // console.log(`❌ INVALID PDF #${invalidCount}:`);
+        // console.log(`   ID: ${pdf.id}`);
+        // console.log(`   Title: ${pdf.title}`);
+        // console.log(`   Size: ${pdf.file_size} bytes`);
+        // console.log(`   File: ${path.basename(pdf.file_path)}`);
+        // console.log(`   Reason: ${reason}`);
+        // console.log(`   Created: ${pdf.created_at}`);
+        // console.log('');
       }
     }
 
     if (invalidCount === 0) {
-      console.log('✅ No invalid PDFs found! All PDFs are valid.\n');
+      // console.log('✅ No invalid PDFs found! All PDFs are valid.\n');
       return;
     }
 
-    console.log(`\n⚠️  Found ${invalidCount} invalid PDF(s)\n`);
+    // console.log(`\n⚠️  Found ${invalidCount} invalid PDF(s)\n`);
 
     // Ask for confirmation before deleting
-    console.log('Do you want to delete these invalid PDFs? (yes/no)');
-    console.log('This will remove them from both the database and file system.\n');
+    // console.log('Do you want to delete these invalid PDFs? (yes/no)');
+    // console.log('This will remove them from both the database and file system.\n');
 
     const readline = require('readline').createInterface({
       input: process.stdin,
@@ -102,20 +102,20 @@ async function cleanupInvalidPDFs() {
 
     readline.question('Enter your choice: ', async (answer) => {
       if (answer.toLowerCase() === 'yes' || answer.toLowerCase() === 'y') {
-        console.log('\n🗑️  Deleting invalid PDFs...\n');
+        // console.log('\n🗑️  Deleting invalid PDFs...\n');
 
         for (const invalidPDF of invalidPDFs) {
           try {
             // Delete from file system
             if (fs.existsSync(invalidPDF.file_path)) {
               fs.unlinkSync(invalidPDF.file_path);
-              console.log(`   ✓ Deleted file: ${path.basename(invalidPDF.file_path)}`);
+              // console.log(`   ✓ Deleted file: ${path.basename(invalidPDF.file_path)}`);
             }
 
             // Delete from database
             await Pdfs.destroy({ where: { id: invalidPDF.id } });
-            console.log(`   ✓ Deleted database record: ${invalidPDF.title}`);
-            console.log('');
+            // console.log(`   ✓ Deleted database record: ${invalidPDF.title}`);
+            // console.log('');
 
             deletedCount++;
           } catch (err) {
@@ -123,9 +123,9 @@ async function cleanupInvalidPDFs() {
           }
         }
 
-        console.log(`\n✅ Cleanup complete! Deleted ${deletedCount} invalid PDF(s).\n`);
+        // console.log(`\n✅ Cleanup complete! Deleted ${deletedCount} invalid PDF(s).\n`);
       } else {
-        console.log('\n❌ Cleanup cancelled. No files were deleted.\n');
+        // console.log('\n❌ Cleanup cancelled. No files were deleted.\n');
       }
 
       readline.close();

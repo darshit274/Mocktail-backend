@@ -14,7 +14,7 @@ const { User } = require('./models');
       process.exit(1);
     }
 
-    console.log('Test user:', user.uuid, user.email);
+    // console.log('Test user:', user.uuid, user.email);
 
     // Generate token
     const tokenPayload = {
@@ -25,9 +25,9 @@ const { User } = require('./models');
     const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret';
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
 
-    console.log('\nGenerated token for testing:');
-    console.log(token);
-    console.log('\nNow testing payment API...\n');
+    // console.log('\nGenerated token for testing:');
+    // console.log(token);
+    // console.log('\nNow testing payment API...\n');
 
     // Test payment creation
     const axios = require('axios');
@@ -42,8 +42,8 @@ const { User } = require('./models');
         }
       });
 
-      console.log('Payment API Response:');
-      console.log(JSON.stringify(response.data, null, 2));
+      // console.log('Payment API Response:');
+      // console.log(JSON.stringify(response.data, null, 2));
 
     } catch (apiError) {
       console.error('Payment API Error:');

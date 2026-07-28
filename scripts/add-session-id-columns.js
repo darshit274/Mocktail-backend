@@ -19,9 +19,9 @@ async function run() {
       allowNull: true,
       defaultValue: null
     });
-    console.log('✅ Added current_session_id to users table');
+    // console.log('✅ Added current_session_id to users table');
   } else {
-    console.log('ℹ️  current_session_id already exists in users table — skipping');
+    // console.log('ℹ️  current_session_id already exists in users table — skipping');
   }
 
   // --- admins table ---
@@ -32,9 +32,9 @@ async function run() {
       allowNull: true,
       defaultValue: null
     });
-    console.log('✅ Added current_session_id to admins table');
+    // console.log('✅ Added current_session_id to admins table');
   } else {
-    console.log('ℹ️  current_session_id already exists in admins table — skipping');
+    // console.log('ℹ️  current_session_id already exists in admins table — skipping');
   }
 
   // --- device_id on users (app device lock) ---
@@ -44,13 +44,13 @@ async function run() {
       allowNull: true,
       defaultValue: null
     });
-    console.log('✅ Added device_id to users table');
+    // console.log('✅ Added device_id to users table');
   } else {
-    console.log('ℹ️  device_id already exists in users table — skipping');
+    // console.log('ℹ️  device_id already exists in users table — skipping');
   }
 
   await sequelize.close();
-  console.log('\nDone. Single-device login enforcement is ready.');
+  // console.log('\nDone. Single-device login enforcement is ready.');
 }
 
 run().catch(err => {

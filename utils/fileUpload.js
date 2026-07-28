@@ -78,7 +78,7 @@ exports.imageUpload = (extensions = null, fieldName = 'files', maxSize = null, d
 
       const files = req.files;
 
-      console.log('Uploaded files:', req.files);
+      // console.log('Uploaded files:', req.files);
 
       // If no files uploaded, skip deleting old files and continue
       if (!files || files.length === 0) {
@@ -94,7 +94,7 @@ exports.imageUpload = (extensions = null, fieldName = 'files', maxSize = null, d
             if (error) {
               console.error(`Error deleting old file:`, error);
             } else {
-              console.log(`Old file deleted successfully`);
+              // console.log(`Old file deleted successfully`);
             }
           });
         });

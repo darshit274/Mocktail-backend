@@ -439,7 +439,7 @@ class WebPDFController {
             // Visibility change detection
             document.addEventListener('visibilitychange', function() {
               if (document.hidden) {
-                console.log('Tab hidden - potential screenshot attempt detected');
+                // console.log('Tab hidden - potential screenshot attempt detected');
               }
             });
             
@@ -455,7 +455,7 @@ class WebPDFController {
             // Disable developer tools
             setInterval(function() {
               if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
-                console.log('Developer tools detected');
+                // console.log('Developer tools detected');
                 // In production, you might want to close the window or redirect
               }
             }, 1000);

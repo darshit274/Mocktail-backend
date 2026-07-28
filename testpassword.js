@@ -2,4 +2,4 @@
 import bcrypt from "bcryptjs"
 const hashedPassword = await bcrypt.hash('mocktale.academy@admin.com', 10);
 
-console.log(hashedPassword);
+// console.log(hashedPassword);

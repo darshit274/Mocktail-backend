@@ -1,18 +1,18 @@
 const { sequelize } = require('../models');
 
 async function applyHierarchyChanges() {
-  console.log('🔄 Applying simplified hierarchy changes...');
+  // console.log('🔄 Applying simplified hierarchy changes...');
 
   try {
     // Check if columns already exist
     const [categoriesDesc] = await sequelize.query("DESCRIBE categories");
     const existingCols = categoriesDesc.map(col => col.Field);
     
-    console.log('📋 Current categories columns:', existingCols);
+    // console.log('📋 Current categories columns:', existingCols);
 
     // Add node_type column if it doesn't exist
     if (!existingCols.includes('node_type')) {
-      console.log('➕ Adding node_type column...');
+      // console.log('➕ Adding node_type column...');
       await sequelize.query(`
         ALTER TABLE categories 
         ADD COLUMN node_type ENUM('unset', 'container', 'question_holder') 
@@ -23,7 +23,7 @@ async function applyHierarchyChanges() {
 
     // Add parent_category_id column if it doesn't exist
     if (!existingCols.includes('parent_category_id')) {
-      console.log('➕ Adding parent_category_id column...');
+      // console.log('➕ Adding parent_category_id column...');
       await sequelize.query(`
         ALTER TABLE categories 
         ADD COLUMN parent_category_id INT NULL
@@ -41,7 +41,7 @@ async function applyHierarchyChanges() {
 
     // Add hierarchy_level column if it doesn't exist
     if (!existingCols.includes('hierarchy_level')) {
-      console.log('➕ Adding hierarchy_level column...');
+      // console.log('➕ Adding hierarchy_level column...');
       await sequelize.query(`
         ALTER TABLE categories 
         ADD COLUMN hierarchy_level INT DEFAULT 0 NOT NULL
@@ -51,7 +51,7 @@ async function applyHierarchyChanges() {
 
     // Add display_order column if it doesn't exist
     if (!existingCols.includes('display_order')) {
-      console.log('➕ Adding display_order column...');
+      // console.log('➕ Adding display_order column...');
       await sequelize.query(`
         ALTER TABLE categories 
         ADD COLUMN display_order INT DEFAULT 0 NOT NULL
@@ -60,54 +60,54 @@ async function applyHierarchyChanges() {
     }
 
     // Add indexes
-    console.log('📊 Adding indexes...');
+    // console.log('📊 Adding indexes...');
     try {
       await sequelize.query(`
         CREATE INDEX idx_categories_parent ON categories(parent_category_id)
       `);
-      console.log('✅ Added idx_categories_parent');
+      // console.log('✅ Added idx_categories_parent');
     } catch (e) {
       if (!e.message.includes('Duplicate key name')) {
         throw e;
       }
-      console.log('⚠️ Index idx_categories_parent already exists');
+      // console.log('⚠️ Index idx_categories_parent already exists');
     }
 
     try {
       await sequelize.query(`
         CREATE INDEX idx_categories_test_series_level ON categories(test_series_id, hierarchy_level)
       `);
-      console.log('✅ Added idx_categories_test_series_level');
+      // console.log('✅ Added idx_categories_test_series_level');
     } catch (e) {
       if (!e.message.includes('Duplicate key name')) {
         throw e;
       }
-      console.log('⚠️ Index idx_categories_test_series_level already exists');
+      // console.log('⚠️ Index idx_categories_test_series_level already exists');
     }
 
     try {
       await sequelize.query(`
         CREATE INDEX idx_categories_node_type ON categories(node_type)
       `);
-      console.log('✅ Added idx_categories_node_type');
+      // console.log('✅ Added idx_categories_node_type');
     } catch (e) {
       if (!e.message.includes('Duplicate key name')) {
         throw e;
       }
-      console.log('⚠️ Index idx_categories_node_type already exists');
+      // console.log('⚠️ Index idx_categories_node_type already exists');
     }
 
     // Now handle questions table
-    console.log('🔄 Updating questions table...');
+    // console.log('🔄 Updating questions table...');
     
     const [questionsDesc] = await sequelize.query("DESCRIBE questions");
     const existingQuestionCols = questionsDesc.map(col => col.Field);
     
-    console.log('📋 Current questions columns:', existingQuestionCols);
+    // console.log('📋 Current questions columns:', existingQuestionCols);
 
     // Add category_id column to questions if it doesn't exist
     if (!existingQuestionCols.includes('category_id')) {
-      console.log('➕ Adding category_id column to questions...');
+      // console.log('➕ Adding category_id column to questions...');
       await sequelize.query(`
         ALTER TABLE questions 
         ADD COLUMN category_id INT NULL
@@ -125,7 +125,7 @@ async function applyHierarchyChanges() {
 
     // Add display_order column to questions if it doesn't exist
     if (!existingQuestionCols.includes('display_order')) {
-      console.log('➕ Adding display_order column to questions...');
+      // console.log('➕ Adding display_order column to questions...');
       await sequelize.query(`
         ALTER TABLE questions 
         ADD COLUMN display_order INT DEFAULT 0 NOT NULL
@@ -138,15 +138,15 @@ async function applyHierarchyChanges() {
       await sequelize.query(`
         CREATE INDEX idx_questions_category ON questions(category_id)
       `);
-      console.log('✅ Added idx_questions_category');
+      // console.log('✅ Added idx_questions_category');
     } catch (e) {
       if (!e.message.includes('Duplicate key name')) {
         throw e;
       }
-      console.log('⚠️ Index idx_questions_category already exists');
+      // console.log('⚠️ Index idx_questions_category already exists');
     }
 
-    console.log('✅ All simplified hierarchy changes applied successfully!');
+    // console.log('✅ All simplified hierarchy changes applied successfully!');
 
   } catch (error) {
     console.error('❌ Error applying hierarchy changes:', error);
@@ -157,7 +157,7 @@ async function applyHierarchyChanges() {
 // Run the migration
 applyHierarchyChanges()
   .then(() => {
-    console.log('🎉 Database changes completed!');
+    // console.log('🎉 Database changes completed!');
     process.exit(0);
   })
   .catch((error) => {
