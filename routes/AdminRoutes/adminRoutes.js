@@ -41,6 +41,7 @@ router.delete('/students/:id', adminAuth, adminController.deleteStudent);
 // User management routes (same as students, for frontend compatibility)
 router.get('/users', adminAuth, adminController.getStudents);
 router.get('/users/stats', adminAuth, adminController.getUserStats);
+router.get('/users/export', adminAuth, adminController.exportStudents);
 router.get('/users/:id', adminAuth, adminController.getStudentById);
 router.post('/users', adminAuth, adminController.createStudent);
 router.put('/users/:id', adminAuth, adminController.updateStudent);

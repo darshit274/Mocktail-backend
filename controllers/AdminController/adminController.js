@@ -435,6 +435,60 @@ exports.getStudents = async (req, res, next) => {
     }
 };
 
+// Export students data as CSV
+exports.exportStudents = async (req, res, next) => {
+    try {
+        const search = req.query.search || '';
+
+        const whereClause = {};
+
+        if (search) {
+            whereClause[Op.or] = [
+                { username: { [Op.like]: `%${search}%` } },
+                { email: { [Op.like]: `%${search}%` } },
+                { phone: { [Op.like]: `%${search}%` } }
+            ];
+        }
+
+        if (req.query.is_active !== undefined && req.query.is_active !== '') {
+            whereClause.isActive = req.query.is_active === 'true';
+        }
+
+        if (req.query.is_verified !== undefined && req.query.is_verified !== '') {
+            whereClause.isEmailVerified = req.query.is_verified === 'true';
+        }
+
+        const students = await User.findAll({
+            where: whereClause,
+            attributes: ['uuid', 'username', 'email', 'phone', 'isEmailVerified', 'isActive', 'created_at'],
+            order: [['created_at', 'DESC']]
+        });
+
+        const csvHeader = 'UUID,Username,Email,Phone,Verified,Active,Joined\n';
+        const csvRows = students.map(student => {
+            return [
+                student.uuid,
+                `"${(student.username || '').replace(/"/g, '""')}"`,
+                student.email,
+                student.phone || '',
+                student.isEmailVerified ? 'Yes' : 'No',
+                student.isActive ? 'Yes' : 'No',
+                new Date(student.created_at).toISOString().split('T')[0]
+            ].join(',');
+        }).join('\n');
+
+        const csv = csvHeader + csvRows;
+
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename=students_${new Date().toISOString().split('T')[0]}.csv`);
+        res.send(csv);
+    } catch (err) {
+        console.error('Export students error:', err);
+        const error = new ErrorHandler('Failed to export students', 500);
+        return next(error);
+    }
+};
+
 // Get single student by ID
 exports.getStudentById = async (req, res, next) => {
     try {
