@@ -582,11 +582,22 @@ class QuestionImportController {
       const importErrors = [];
       const createdQuestions = [];
 
+      // Offset new question_order values past whatever already exists in this
+      // category so a repeat/second import doesn't collide with prior order values
+      // (question_order is scoped per category_id) and reshuffle existing questions.
+      const existingMaxOrder = await Question.max('question_order', {
+        where: { category_id: importRecord.category_id }
+      });
+      const orderOffset = existingMaxOrder || 0;
+
       // Import each valid question
       for (const questionData of parseResult.validQuestions) {
         try {
           const question = await Question.create({
             ...questionData,
+            question_order: questionData.question_order != null
+              ? questionData.question_order + orderOffset
+              : questionData.question_order,
             category_id: importRecord.category_id
           });
           
