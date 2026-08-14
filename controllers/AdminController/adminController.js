@@ -1,5 +1,5 @@
 const ErrorHandler = require('../../utils/default/errorHandler');
-const { Admin, User, Subscription, TestSeries } = require('../../models');
+const { Admin, User, Subscription, TestSeries, Category, sequelize } = require('../../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
@@ -831,45 +831,64 @@ exports.getTestAttemptAnalytics = async (req, res, next) => {
     }
 };
 
+// A student is counted as having "completed" a course (TestSeries) once they have
+// a completed TestSession for every leaf, question-holder Category under it —
+// there's no fixed catalog of "tests" per course (each submission creates a
+// throwaway Test row), so leaf categories are the only stable content unit.
 exports.getCategoryAnalytics = async (req, res, next) => {
     try {
-        // Get actual category data from new test system
-        let categoryData = [];
-        
-        try {
-            const { ExamCategory, TestSeries } = require('../../models');
-            
-            if (ExamCategory && TestSeries) {
-                const categories = await ExamCategory.findAll({
-                    where: { 
-                        is_active: true,
-                        hierarchy_level: 0 // Only top-level categories
-                    },
-                    include: [{
-                        model: TestSeries,
-                        as: 'testSeries',
-                        where: { is_active: true },
-                        required: false,
-                        attributes: []
-                    }],
-                    attributes: [
-                        'name',
-                        [TestSeries.sequelize.fn('COUNT', TestSeries.sequelize.col('testSeries.id')), 'value']
-                    ],
-                    group: ['ExamCategory.id', 'ExamCategory.name'],
-                    order: [[TestSeries.sequelize.fn('COUNT', TestSeries.sequelize.col('testSeries.id')), 'DESC']]
-                });
+        const courses = await TestSeries.findAll({
+            where: { is_active: true },
+            attributes: ['id', 'name']
+        });
 
-                categoryData = categories.map(cat => ({
-                    name: cat.name,
-                    value: parseInt(cat.getDataValue('value') || 0)
-                }));
+        const courseCompletions = [];
+
+        for (const course of courses) {
+            const leafCategories = await Category.findAll({
+                where: { test_series_id: course.id, node_type: 'question_holder' },
+                attributes: ['uuid']
+            });
+
+            const totalLeaf = leafCategories.length;
+            if (totalLeaf === 0) {
+                courseCompletions.push({ name: course.name, value: 0 });
+                continue;
             }
-        } catch (modelError) {
-            // console.log('Category analytics model error:', modelError.message);
+
+            const leafUuids = leafCategories.map(c => c.uuid);
+
+            const [rows] = await sequelize.query(
+                `SELECT COUNT(*) AS completed_count FROM (
+                    SELECT ts.user_id
+                    FROM test_sessions ts
+                    WHERE ts.is_completed = 1
+                        AND JSON_UNQUOTE(JSON_EXTRACT(ts.session_data, '$.category_uuid')) IN (:leafUuids)
+                    GROUP BY ts.user_id
+                    HAVING COUNT(DISTINCT JSON_UNQUOTE(JSON_EXTRACT(ts.session_data, '$.category_uuid'))) >= :totalLeaf
+                ) t`,
+                { replacements: { leafUuids, totalLeaf } }
+            );
+
+            courseCompletions.push({
+                name: course.name,
+                value: parseInt(rows[0]?.completed_count || 0)
+            });
         }
 
-        // Fallback to mock data if no real data available
+        courseCompletions.sort((a, b) => b.value - a.value);
+
+        const TOP_N = 6;
+        let categoryData = courseCompletions.slice(0, TOP_N);
+        const rest = courseCompletions.slice(TOP_N);
+        if (rest.length > 0) {
+            const otherTotal = rest.reduce((sum, c) => sum + c.value, 0);
+            if (otherTotal > 0) {
+                categoryData.push({ name: 'Other', value: otherTotal });
+            }
+        }
+
+        // Fallback to mock data only when there are no active courses to report on at all
         if (categoryData.length === 0) {
             categoryData = [
                 { name: 'PSI Tests', value: 35 },
