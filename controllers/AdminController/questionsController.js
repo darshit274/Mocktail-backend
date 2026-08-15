@@ -6,6 +6,20 @@ const path = require('path');
 const fs = require('fs');
 const XLSX = require('xlsx');
 
+// QuestionImport's JSON-typed fields (validation_errors, import_errors, import_summary) are always
+// assigned as plain JS values and never manually JSON.stringify'd — Sequelize's DataTypes.JSON
+// serializes them on write. On read, whether they arrive already-parsed depends on whether the
+// underlying DB column is a native MySQL JSON type (driver auto-parses) or a plain TEXT/LONGTEXT
+// column (value stays a string). This helper handles both so the code works either way.
+const parseJsonField = (value) => {
+    if (value == null || typeof value !== 'string') return value;
+    try {
+        return JSON.parse(value);
+    } catch (error) {
+        return value;
+    }
+};
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -931,13 +945,13 @@ const handleFileUpload = async (req, res, next) => {
                 total_rows: rawData.length,
                 valid_rows: validQuestions.length,
                 error_rows: errors.length,
-                validation_errors: errors.length > 0 ? JSON.stringify(errors) : null,
+                validation_errors: errors.length > 0 ? errors : null,
                 import_status: validQuestions.length > 0 ? 'validated' : 'failed',
-                import_summary: JSON.stringify({
+                import_summary: {
                     validated_questions: validQuestions,
                     preview: validQuestions.slice(0, 5),
                     validation_completed_at: new Date()
-                })
+                }
             });
             
             // console.log('📊 Import validation results:', {
@@ -997,8 +1011,8 @@ exports.getImportStatus = async (req, res, next) => {
                 total_rows: importRecord.total_rows,
                 successful_imports: importRecord.successful_imports,
                 failed_imports: importRecord.failed_imports,
-                validation_errors: importRecord.validation_errors ? JSON.parse(importRecord.validation_errors) : [],
-                import_errors: importRecord.import_errors ? JSON.parse(importRecord.import_errors) : [],
+                validation_errors: importRecord.validation_errors ? parseJsonField(importRecord.validation_errors) : [],
+                import_errors: importRecord.import_errors ? parseJsonField(importRecord.import_errors) : [],
                 created_at: importRecord.created_at,
                 updated_at: importRecord.updated_at
             }
@@ -1030,13 +1044,13 @@ exports.getImportPreview = async (req, res, next) => {
         let previewData = null;
         if (importRecord.import_summary) {
             try {
-                const summaryData = JSON.parse(importRecord.import_summary);
+                const summaryData = parseJsonField(importRecord.import_summary);
                 previewData = summaryData.preview || summaryData.validated_questions?.slice(0, 5) || [];
             } catch (error) {
                 console.error('Failed to parse import summary:', error);
             }
         }
-        
+
         res.json({
             success: true,
             message: 'Import preview data retrieved',
@@ -1048,7 +1062,7 @@ exports.getImportPreview = async (req, res, next) => {
                 failed_imports: importRecord.failed_imports,
                 file_name: importRecord.original_filename,
                 file_type: importRecord.file_type,
-                validation_errors: importRecord.validation_errors ? JSON.parse(importRecord.validation_errors) : [],
+                validation_errors: importRecord.validation_errors ? parseJsonField(importRecord.validation_errors) : [],
                 preview: previewData || []
             }
         });
@@ -1082,46 +1096,58 @@ exports.confirmImport = async (req, res, next) => {
         let validatedQuestions = [];
         if (importRecord.import_summary) {
             try {
-                const summaryData = JSON.parse(importRecord.import_summary);
+                const summaryData = parseJsonField(importRecord.import_summary);
                 validatedQuestions = summaryData.validated_questions || [];
             } catch (error) {
                 console.error('Failed to parse import summary:', error);
+                // Revert status so the import isn't permanently stuck on 'importing'
+                await importRecord.update({ import_status: 'validated' });
                 return next(new ErrorHandler('Failed to retrieve validated questions from import record', 500));
             }
         }
-        
+
         if (!validatedQuestions || validatedQuestions.length === 0) {
+            // Revert status so the import isn't permanently stuck on 'importing'
+            await importRecord.update({ import_status: 'validated' });
             return next(new ErrorHandler('No validated questions found in import record', 400));
         }
-        
+
         // console.log(`📥 Importing ${validatedQuestions.length} questions directly to category ${importRecord.category_id}...`);
-        
+
         const { v4: uuidv4 } = require('uuid');
         let successCount = 0;
         let failureCount = 0;
         const importErrors = [];
         const importedQuestionIds = [];
-        
+
+        // Append imported questions after whatever already exists in this category so a
+        // repeat/second import doesn't collide at display_order 0 and reshuffle existing ones.
+        const existingMaxOrder = await Question.max('display_order', {
+            where: { category_id: importRecord.category_id }
+        });
+        let nextDisplayOrder = (existingMaxOrder || 0) + 1;
+
         // Insert each question
         for (let i = 0; i < validatedQuestions.length; i++) {
             try {
                 const questionData = {
                     ...validatedQuestions[i],
                     uuid: uuidv4(),
+                    display_order: nextDisplayOrder++,
                     // Skip test_id for now - questions will be linked directly to category
                     created_at: new Date(),
                     updated_at: new Date()
                 };
-                
+
                 const createdQuestion = await Question.create(questionData, {
                     // Add error handling for constraint issues
                     validate: true
                 });
                 importedQuestionIds.push(createdQuestion.id);
                 successCount++;
-                
+
                 // console.log(`✅ Imported question ${i + 1}: ${questionData.question_text?.substring(0, 50)}...`);
-                
+
             } catch (error) {
                 failureCount++;
                 const errorMsg = `Row ${i + 1}: ${error.message}`;
@@ -1129,21 +1155,21 @@ exports.confirmImport = async (req, res, next) => {
                 console.error(`❌ Failed to import question ${i + 1}:`, error.message);
             }
         }
-        
+
         // Update import record with results
         const finalStatus = failureCount === 0 ? 'completed' : (successCount > 0 ? 'completed' : 'failed');
-        
+
         await importRecord.update({
             import_status: finalStatus,
             successful_imports: successCount,
             failed_imports: failureCount,
-            import_errors: importErrors.length > 0 ? JSON.stringify(importErrors) : null,
-            import_summary: JSON.stringify({
+            import_errors: importErrors.length > 0 ? importErrors : null,
+            import_summary: {
                 imported_question_ids: importedQuestionIds,
                 success_count: successCount,
                 failure_count: failureCount,
                 completed_at: new Date()
-            })
+            }
         });
         
         // console.log(`🎉 Import completed! Success: ${successCount}, Failures: ${failureCount}`);
@@ -1184,6 +1210,16 @@ exports.confirmImport = async (req, res, next) => {
         
     } catch (error) {
         console.error('❌ Confirm import error:', error);
+        // Revert status so the import isn't permanently stuck on 'importing' after an unexpected error
+        try {
+            const { importId } = req.params;
+            await QuestionImport.update(
+                { import_status: 'validated' },
+                { where: { id: importId, import_status: 'importing' } }
+            );
+        } catch (revertError) {
+            console.error('❌ Failed to revert stuck import status:', revertError);
+        }
         next(new ErrorHandler(`Failed to confirm import: ${error.message}`, 500));
     }
 };
