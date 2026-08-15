@@ -1876,37 +1876,39 @@ class TestManagementController {
         });
       }
 
-      let updateData = {};
-      let message = '';
-
-      switch (action) {
-        case 'delete':
-          updateData = { is_active: false };
-          message = `${questionIds.length} questions deleted successfully`;
-          break;
-        case 'activate':
-          updateData = { is_active: true };
-          message = `${questionIds.length} questions activated successfully`;
-          break;
-        case 'deactivate':
-          updateData = { is_active: false };
-          message = `${questionIds.length} questions deactivated successfully`;
-          break;
-        default:
-          return res.status(400).json({
-            success: false,
-            message: 'Invalid action. Use: delete, activate, or deactivate'
-          });
+      if (!['delete', 'activate', 'deactivate'].includes(action)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid action. Use: delete, activate, or deactivate'
+        });
       }
 
-      // Update questions
-      const [updatedCount] = await Question.update(updateData, {
-        where: {
-          uuid: {
-            [Op.in]: questionIds
-          }
-        }
+      // Grab affected questions' test_ids up front for the total_marks recompute below —
+      // 'delete' removes the rows outright, so they wouldn't be queryable afterwards.
+      const affectedQuestions = await Question.findAll({
+        where: { uuid: { [Op.in]: questionIds } },
+        attributes: ['id', 'uuid', 'test_id']
       });
+      const testIds = [...new Set(affectedQuestions.map(q => q.test_id))];
+
+      let updatedCount = 0;
+      let message = '';
+
+      if (action === 'delete') {
+        // 'delete' matches the single-question delete and the category bulk-delete: a real
+        // removal, not a soft is_active flip (which is what 'deactivate' is for and was
+        // previously duplicated here, making bulk delete invisible in the questions list).
+        updatedCount = await Question.destroy({
+          where: { uuid: { [Op.in]: questionIds } }
+        });
+        message = `${questionIds.length} questions deleted successfully`;
+      } else {
+        const updateData = { is_active: action === 'activate' };
+        [updatedCount] = await Question.update(updateData, {
+          where: { uuid: { [Op.in]: questionIds } }
+        });
+        message = `${questionIds.length} questions ${action}d successfully`;
+      }
 
       if (updatedCount === 0) {
         return res.status(404).json({
@@ -1916,17 +1918,8 @@ class TestManagementController {
       }
 
       // Update test total marks for affected tests
-      const affectedQuestions = await Question.findAll({
-        where: {
-          uuid: {
-            [Op.in]: questionIds
-          }
-        },
-        include: [{ model: Test, as: 'test' }]
-      });
-
-      const testIds = [...new Set(affectedQuestions.map(q => q.test_id))];
       for (const testId of testIds) {
+        if (!testId) continue;
         const totalMarks = await Question.sum('marks', {
           where: { test_id: testId, is_active: true }
         });
