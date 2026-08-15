@@ -1980,6 +1980,12 @@ class TestManagementController {
             model: Category,
             as: 'parentCategory',
             attributes: ['id', 'uuid', 'name', 'hierarchy_level']
+          },
+          // Get the owning course for breadcrumb
+          {
+            model: TestSeries,
+            as: 'testSeries',
+            attributes: ['id', 'uuid', 'name', 'description']
           }
         ]
       });
@@ -1989,6 +1995,24 @@ class TestManagementController {
           success: false,
           message: 'Category not found'
         });
+      }
+
+      // Walk up the parent chain to build the full breadcrumb trail (root-first),
+      // since parentCategory only gives one level and nested categories can go deeper.
+      const ancestors = [];
+      let parentId = category.parent_category_id;
+      while (parentId) {
+        const parent = await Category.findByPk(parentId, {
+          attributes: ['id', 'uuid', 'name', 'hierarchy_level', 'parent_category_id']
+        });
+        if (!parent) break;
+        ancestors.unshift({
+          id: parent.id,
+          uuid: parent.uuid,
+          name: parent.name,
+          hierarchy_level: parent.hierarchy_level
+        });
+        parentId = parent.parent_category_id;
       }
 
       // Determine button states based on node_type
@@ -2016,6 +2040,12 @@ class TestManagementController {
       res.json({
         success: true,
         data: {
+          test_series: category.testSeries ? {
+            id: category.testSeries.id,
+            uuid: category.testSeries.uuid,
+            name: category.testSeries.name,
+            description: category.testSeries.description
+          } : null,
           category: {
             id: category.id,
             uuid: category.uuid,
@@ -2024,6 +2054,7 @@ class TestManagementController {
             node_type: category.node_type,
             hierarchy_level: category.hierarchy_level,
             parent_category: category.parentCategory,
+            ancestors,
             negative_marking_enabled: category.negative_marking_enabled,
             negative_marks_per_wrong: category.negative_marks_per_wrong
           },
